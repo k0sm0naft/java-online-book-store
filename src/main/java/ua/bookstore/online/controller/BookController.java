@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ua.bookstore.online.dto.BookDto;
 import ua.bookstore.online.dto.CreateBookRequestDto;
+import ua.bookstore.online.dto.SearchParameters;
 import ua.bookstore.online.service.BookService;
 
 @RequiredArgsConstructor
@@ -30,6 +31,11 @@ public class BookController {
     @GetMapping("/{id}")
     public BookDto getBookById(@PathVariable Long id) {
         return bookService.getById(id);
+    }
+
+    @GetMapping("/search")
+    public List<BookDto> searchBooks(SearchParameters searchParameters) {
+        return bookService.getByParameters(searchParameters);
     }
 
     @PostMapping
