@@ -10,8 +10,7 @@ import ua.bookstore.online.repository.SpecificationProviderManager;
 
 @RequiredArgsConstructor
 @Component
-public class BookSpecificationProviderManager
-        implements SpecificationProviderManager<Book> {
+public class BookSpecificationProviderManager implements SpecificationProviderManager<Book> {
     private final List<SpecificationProvider<Book>> bookSpecificationProviders;
 
     @Override
