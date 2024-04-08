@@ -1,4 +1,4 @@
 package ua.bookstore.online.dto;
 
-public sealed class AbstractSearchParameters permits BookSearchParameters{
+public abstract sealed class AbstractSearchParameters permits BookSearchParameters{
 }
