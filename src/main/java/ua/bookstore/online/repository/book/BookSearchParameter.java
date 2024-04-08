@@ -1,15 +1,14 @@
-package ua.bookstore.online.repository;
+package ua.bookstore.online.repository.book;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum Parameter {
+public enum BookSearchParameter {
     TITLE("title"),
     AUTHOR("author"),
-    ISBN("isbn"),
-    DESCRIPTION("description");
+    ISBN("isbn");
 
     private final String name;
 }

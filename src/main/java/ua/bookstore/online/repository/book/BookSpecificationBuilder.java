@@ -3,9 +3,8 @@ package ua.bookstore.online.repository.book;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import ua.bookstore.online.dto.SearchParameters;
+import ua.bookstore.online.dto.BookSearchParameters;
 import ua.bookstore.online.model.Book;
-import ua.bookstore.online.repository.Parameter;
 import ua.bookstore.online.repository.SpecificationBuilder;
 import ua.bookstore.online.repository.SpecificationProviderManager;
 
@@ -15,27 +14,25 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
     private final SpecificationProviderManager<Book> bookSpecificationProviderManager;
 
     @Override
-    public Specification<Book> build(SearchParameters parameters) {
+    public Specification<Book> build(BookSearchParameters bookSearchParameters) {
         Specification<Book> specification = Specification.where(null);
-        if (parameters.title() != null) {
+        String[] titles = bookSearchParameters.getTitles();
+        if (titles != null && titles.length > 0) {
             specification = specification.and(bookSpecificationProviderManager
-                    .getSpecificationProvider(Parameter.TITLE)
-                    .getSpecification(parameters.title()));
+                    .getSpecificationProvider(BookSearchParameter.TITLE.getName())
+                    .getSpecification(titles));
         }
-        if (parameters.author() != null) {
+        String[] authors = bookSearchParameters.getAuthors();
+        if (authors != null && authors.length > 0) {
             specification = specification.and(bookSpecificationProviderManager
-                    .getSpecificationProvider(Parameter.AUTHOR)
-                    .getSpecification(parameters.author()));
+                    .getSpecificationProvider(BookSearchParameter.AUTHOR.getName())
+                    .getSpecification(authors));
         }
-        if (parameters.isbn() != null) {
+        String[] isbns = bookSearchParameters.getIsbns();
+        if (isbns != null && isbns.length > 0) {
             specification = specification.and(bookSpecificationProviderManager
-                    .getSpecificationProvider(Parameter.ISBN)
-                    .getSpecification(parameters.isbn()));
-        }
-        if (parameters.description() != null) {
-            specification = specification.and(bookSpecificationProviderManager
-                    .getSpecificationProvider(Parameter.DESCRIPTION)
-                    .getSpecification(parameters.description()));
+                    .getSpecificationProvider(BookSearchParameter.ISBN.getName())
+                    .getSpecification(isbns));
         }
         return specification;
     }

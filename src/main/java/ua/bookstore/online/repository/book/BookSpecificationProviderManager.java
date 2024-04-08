@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ua.bookstore.online.exception.SpecificationProviderNotFoundException;
 import ua.bookstore.online.model.Book;
-import ua.bookstore.online.repository.Parameter;
 import ua.bookstore.online.repository.SpecificationProvider;
 import ua.bookstore.online.repository.SpecificationProviderManager;
 
@@ -15,12 +14,12 @@ public class BookSpecificationProviderManager implements SpecificationProviderMa
     private final List<SpecificationProvider<Book>> bookSpecificationProviders;
 
     @Override
-    public SpecificationProvider<Book> getSpecificationProvider(Parameter parameter) {
-        return bookSpecificationProviders
-                .stream()
-                .filter(p -> p.getParameter() == parameter)
+    public SpecificationProvider<Book> getSpecificationProvider(String bookSearchParameter) {
+        return bookSpecificationProviders.stream()
+                .filter(p -> p.getSearchParameter().equals(bookSearchParameter))
                 .findFirst()
                 .orElseThrow(() -> new SpecificationProviderNotFoundException(
-                        "Can't find correct specification provider or parameter " + parameter));
+                        "Can't find correct specification provider or parameter "
+                                + bookSearchParameter));
     }
 }
