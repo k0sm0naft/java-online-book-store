@@ -10,16 +10,21 @@ import ua.bookstore.online.repository.SpecificationProviderManager;
 
 @RequiredArgsConstructor
 @Component
-public class BookSpecificationProviderManager implements SpecificationProviderManager<Book> {
-    private final List<SpecificationProvider<Book>> bookSpecificationProviders;
+public class BookSpecificationProviderManager
+        implements SpecificationProviderManager<Book, BookSearchParameter> {
+    private final List<SpecificationProvider<Book, BookSearchParameter>> bookSpecificationProviders;
 
     @Override
-    public SpecificationProvider<Book> getSpecificationProvider(String bookSearchParameter) {
+    public SpecificationProvider<Book, BookSearchParameter> getSpecificationProvider(
+            BookSearchParameter bookSearchParameter) {
         return bookSpecificationProviders.stream()
-                .filter(p -> p.getSearchParameter().equals(bookSearchParameter))
-                .findFirst()
-                .orElseThrow(() -> new SpecificationProviderNotFoundException(
-                        "Can't find correct specification provider or parameter "
-                                + bookSearchParameter));
+                                         .filter(p -> p.getSearchParameter()
+                                                       .equals(bookSearchParameter))
+                                         .findFirst()
+                                         .orElseThrow(
+                                                 () -> new SpecificationProviderNotFoundException(
+                                                         "Can't find correct specification provider"
+                                                                 + " or parameter "
+                                                                 + bookSearchParameter));
     }
 }

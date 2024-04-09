@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 public enum BookSearchParameter {
     TITLE("title"),
     AUTHOR("author"),
-    ISBN("isbn");
+    ISBN("isbn"),
+    MIN_PRICE("price"),
+    MAX_PRICE("price");
 
     private final String name;
 }

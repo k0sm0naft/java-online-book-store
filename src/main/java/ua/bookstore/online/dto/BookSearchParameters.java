@@ -9,4 +9,6 @@ public final class BookSearchParameters extends AbstractSearchParameters {
     private final String[] titles;
     private final String[] authors;
     private final String[] isbns;
+    private final Long minPrice;
+    private final Long maxPrice;
 }
