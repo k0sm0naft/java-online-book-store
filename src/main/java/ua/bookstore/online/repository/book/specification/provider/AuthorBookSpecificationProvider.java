@@ -7,6 +7,6 @@ import ua.bookstore.online.repository.book.BookSearchParameter;
 @Component
 public class AuthorBookSpecificationProvider extends AbstractBookSpecificationProvider<Book> {
     private AuthorBookSpecificationProvider() {
-        super(BookSearchParameter.AUTHOR);
+        super(BookSearchParameter.AUTHOR.getName());
     }
 }

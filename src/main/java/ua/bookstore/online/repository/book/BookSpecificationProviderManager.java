@@ -11,12 +11,11 @@ import ua.bookstore.online.repository.SpecificationProviderManager;
 @RequiredArgsConstructor
 @Component
 public class BookSpecificationProviderManager
-        implements SpecificationProviderManager<Book, BookSearchParameter> {
-    private final List<SpecificationProvider<Book, BookSearchParameter>> bookSpecificationProviders;
+        implements SpecificationProviderManager<Book> {
+    private final List<SpecificationProvider<Book>> bookSpecificationProviders;
 
     @Override
-    public SpecificationProvider<Book, BookSearchParameter> getSpecificationProvider(
-            BookSearchParameter bookSearchParameter) {
+    public SpecificationProvider<Book> getSpecificationProvider(String bookSearchParameter) {
         return bookSpecificationProviders.stream()
                                          .filter(p -> p.getSearchParameter()
                                                        .equals(bookSearchParameter))
