@@ -1,7 +1,7 @@
 package ua.bookstore.online.repository.book;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import ua.bookstore.online.repository.SpecificationProviderManager;
 @RequiredArgsConstructor
 @Component
 public class BookSpecificationBuilder implements SpecificationBuilder<Book, BookSearchParameters> {
-    private final SpecificationProviderManager<Book, BookSearchParameter>
+    private final SpecificationProviderManager<Book>
             bookSpecificationProviderManager;
 
     @Override
@@ -30,19 +30,16 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book, Book
             case TITLE -> bookSearchParameters.getTitles();
             case AUTHOR -> bookSearchParameters.getAuthors();
             case ISBN -> bookSearchParameters.getIsbns();
-            case MIN_PRICE -> Stream.of(bookSearchParameters.getMinPrice() == null
-                                            ? 0
-                                            : bookSearchParameters.getMinPrice())
-                                    .map(String::valueOf)
-                                    .toArray(String[]::new);
-            case MAX_PRICE -> Stream.of(bookSearchParameters.getMaxPrice() == null
-                                            ? Integer.MAX_VALUE
-                                            : bookSearchParameters.getMaxPrice())
-                                    .map(String::valueOf)
-                                    .toArray(String[]::new);
+            case PRICE -> {
+                Long minPrice = Optional.ofNullable(
+                        bookSearchParameters.getMinPrice()).orElse(0L);
+                Long maxPrice = Optional.ofNullable(
+                        bookSearchParameters.getMaxPrice()).orElse(Long.MAX_VALUE);
+                yield new String[]{String.valueOf(minPrice), String.valueOf(maxPrice)};
+            }
         };
         return isValidParameters(parameters)
-                ? bookSpecificationProviderManager.getSpecificationProvider(parameter)
+                ? bookSpecificationProviderManager.getSpecificationProvider(parameter.getName())
                                                   .getSpecification(parameters) : null;
     }
 
