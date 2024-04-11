@@ -13,8 +13,7 @@ import ua.bookstore.online.repository.SpecificationProviderManager;
 @RequiredArgsConstructor
 @Component
 public class BookSpecificationBuilder implements SpecificationBuilder<Book, BookSearchParameters> {
-    private final SpecificationProviderManager<Book>
-            bookSpecificationProviderManager;
+    private final SpecificationProviderManager<Book> bookSpecificationProviderManager;
 
     @Override
     public Specification<Book> build(BookSearchParameters bookSearchParameters) {
