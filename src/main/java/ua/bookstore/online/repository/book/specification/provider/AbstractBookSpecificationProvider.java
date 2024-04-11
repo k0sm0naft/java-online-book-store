@@ -2,20 +2,16 @@ package ua.bookstore.online.repository.book.specification.provider;
 
 import jakarta.persistence.criteria.Predicate;
 import java.util.Arrays;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import ua.bookstore.online.repository.SpecificationProvider;
-import ua.bookstore.online.repository.book.BookSearchParameter;
 
+@Getter
 @RequiredArgsConstructor
 public abstract class AbstractBookSpecificationProvider<T>
-        implements SpecificationProvider<T, BookSearchParameter> {
-    private final BookSearchParameter searchParameter;
-
-    @Override
-    public BookSearchParameter getSearchParameter() {
-        return searchParameter;
-    }
+        implements SpecificationProvider<T> {
+    private final String searchParameter;
 
     @Override
     public Specification<T> getSpecification(String[] params) {
@@ -23,7 +19,7 @@ public abstract class AbstractBookSpecificationProvider<T>
                 criteriaBuilder.or(
                         Arrays.stream(params)
                               .map(p -> criteriaBuilder.like(
-                                      criteriaBuilder.lower(root.get(searchParameter.getName())),
+                                      criteriaBuilder.lower(root.get(searchParameter)),
                                       '%' + p.toLowerCase() + '%')).toArray(Predicate[]::new));
     }
 }

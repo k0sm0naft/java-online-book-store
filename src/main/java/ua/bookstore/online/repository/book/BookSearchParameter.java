@@ -9,8 +9,7 @@ public enum BookSearchParameter {
     TITLE("title"),
     AUTHOR("author"),
     ISBN("isbn"),
-    MIN_PRICE("price"),
-    MAX_PRICE("price");
+    PRICE("price");
 
     private final String name;
 }
