@@ -9,8 +9,7 @@ import ua.bookstore.online.repository.SpecificationProvider;
 
 @Getter
 @RequiredArgsConstructor
-public abstract class AbstractBookSpecificationProvider<T>
-        implements SpecificationProvider<T> {
+public abstract class AbstractBookSpecificationProvider<T> implements SpecificationProvider<T> {
     private final String searchParameter;
 
     @Override

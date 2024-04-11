@@ -1,15 +1,16 @@
 package ua.bookstore.online.dto;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public record CreateBookRequestDto(
-        @NotNull
+        @NotBlank
         String title,
-        @NotNull
+        @NotBlank
         String author,
-        @NotNull
+        @NotBlank
         String isbn,
         @NotNull
         @Min(0)
