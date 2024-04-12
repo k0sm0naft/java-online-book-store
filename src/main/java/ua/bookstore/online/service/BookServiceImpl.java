@@ -2,6 +2,7 @@ package ua.bookstore.online.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ua.bookstore.online.dto.BookDto;
@@ -27,8 +28,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> getAll() {
-        return bookRepository.findAll().stream()
+    public List<BookDto> getAll(Pageable pageable) {
+        return bookRepository.findAll(pageable).stream()
                              .map(bookMapper::toDto)
                              .toList();
     }
@@ -41,10 +42,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> getByParameters(BookSearchParameters bookSearchParameters) {
+    public List<BookDto> getByParameters(
+            BookSearchParameters bookSearchParameters, Pageable pageable) {
         Specification<Book> bookSpecification =
                 bookSpecificationBuilder.build(bookSearchParameters);
-        return bookRepository.findAll(bookSpecification).stream()
+        return bookRepository.findAll(bookSpecification, pageable).stream()
                              .map(bookMapper::toDto)
                              .toList();
     }
@@ -61,6 +63,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void delete(Long id) {
+        if (bookRepository.findById(id).isEmpty()) {
+            throw new EntityNotFoundException("Can't find book to delete by id " + id);
+        }
         bookRepository.deleteById(id);
     }
 }
