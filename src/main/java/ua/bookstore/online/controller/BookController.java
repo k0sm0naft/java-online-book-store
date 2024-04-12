@@ -1,6 +1,9 @@
 package ua.bookstore.online.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -31,22 +34,43 @@ public class BookController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new book", description = "Create a new book if isbn uniq")
-    public BookDto createBook(@RequestBody @Valid CreateBookRequestDto bookDto) {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully created"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "409", description = "Conflict - the isbn non uniq")
+    })
+    public BookDto createBook(@RequestBody @Valid
+            @Parameter(description = "Book fields. Required: title, author, isbn, price")
+            CreateBookRequestDto bookDto
+    ) {
         return bookService.save(bookDto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "Update a new book", description = "Update a new book if exist")
-    public BookDto updateBook(@PathVariable Long id,
-            @RequestBody @Valid CreateBookRequestDto bookDto) {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "Successfully updated"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "409", description = "Conflict - the isbn non uniq")
+    })
+    public BookDto updateBook(
+            @PathVariable @Parameter(description = "Book ID") Long id,
+            @RequestBody @Valid @Parameter(
+                    description = "Book fields. Required: title, author, isbn, price")
+            CreateBookRequestDto bookDto
+    ) {
         return bookService.update(id, bookDto);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Return single book by id", description = "Return single book by id")
-    public BookDto getBookById(@PathVariable Long id) {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
+            @ApiResponse(responseCode = "404", description = "Book with this id not exist")
+    })
+    public BookDto getBookById(@PathVariable @Parameter(description = "Book ID") Long id) {
         return bookService.getById(id);
     }
 
@@ -54,7 +78,12 @@ public class BookController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Return list of books",
             description = "Return list of books with pagination and sorting")
-    public List<BookDto> getAll(Pageable pageable) {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved")
+    })
+    public List<BookDto> getAll(
+            @Parameter(description = "Parameters for pagination") Pageable pageable
+    ) {
         return bookService.getAll(pageable);
     }
 
@@ -63,14 +92,25 @@ public class BookController {
     @Operation(summary = "Return filtered list of books",
             description = "Return filtered list of books with pagination and sorting. "
                     + "Parameters: title, author, isbn, price")
-    public List<BookDto> searchBooks(Pageable pageable, BookSearchParameters bookSearchParameters) {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved")
+    })
+    public List<BookDto> searchBooks(
+            @Parameter(description = "Parameters for pagination") Pageable pageable,
+            @Parameter(description = "Parameters for filtration")
+            BookSearchParameters bookSearchParameters
+    ) {
         return bookService.getByParameters(bookSearchParameters, pageable);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "No content - successfully deleted"),
+            @ApiResponse(responseCode = "404", description = "Not found - wrong id")
+    })
     @Operation(summary = "Delete a book by id", description = "Delete a book by id if exist")
-    public void deleteBook(@PathVariable Long id) {
+    public void deleteBook(@PathVariable @Parameter(description = "Book ID") Long id) {
         bookService.delete(id);
     }
 }
