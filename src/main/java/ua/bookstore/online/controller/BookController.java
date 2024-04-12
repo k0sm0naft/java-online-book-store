@@ -76,8 +76,8 @@ public class BookController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Return list of books",
-            description = "Return list of books with pagination and sorting")
+    @Operation(summary = "Return page of books",
+            description = "Return page of books with pagination and sorting")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved")
     })
@@ -89,8 +89,8 @@ public class BookController {
 
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Return filtered list of books",
-            description = "Return filtered list of books with pagination and sorting. "
+    @Operation(summary = "Return filtered page of books",
+            description = "Return filtered page of books with pagination and sorting. "
                     + "Parameters: title, author, isbn, price")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved")
