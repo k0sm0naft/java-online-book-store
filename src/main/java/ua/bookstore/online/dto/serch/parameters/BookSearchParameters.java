@@ -1,4 +1,4 @@
-package ua.bookstore.online.dto;
+package ua.bookstore.online.dto.serch.parameters;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

@@ -1,6 +1,5 @@
 package ua.bookstore.online.exception;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,9 +32,13 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return getResponseEntity(HttpStatus.BAD_REQUEST, errors);
     }
 
-    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    protected ResponseEntity<Object> handleMethodRepository(
-            SQLIntegrityConstraintViolationException ex) {
+    @ExceptionHandler(UniqIsbnException.class)
+    protected ResponseEntity<Object> handleMethodRepository(UniqIsbnException ex) {
+        return getResponseEntity(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(RegistrationException.class)
+    protected ResponseEntity<Object> handleMethodRepository(RegistrationException ex) {
         return getResponseEntity(HttpStatus.CONFLICT, ex.getMessage());
     }
 

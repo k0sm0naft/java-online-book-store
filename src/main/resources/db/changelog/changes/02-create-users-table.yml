@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: create-books-table
+      id: create-users-table
       author: a.akymenko
       changes:
         - createTable:
-            tableName: books
+            tableName: users
             columns:
               - column:
                   name: id
@@ -13,30 +13,27 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
               - column:
-                  name: title
+                  name: email
                   type: varchar(255)
                   constraints:
                     nullable: false
               - column:
-                  name: author
-                  type: varchar(255)
+                  name: password
+                  type: varchar(24)
                   constraints:
                     nullable: false
               - column:
-                  name: isbn
-                  type: varchar(255)
+                  name: first_name
+                  type: varchar(24)
                   constraints:
                     nullable: false
               - column:
-                  name: price
-                  type: decimal(12,2)
+                  name: last_name
+                  type: varchar(24)
                   constraints:
                     nullable: false
               - column:
-                  name: description
-                  type: varchar(255)
-              - column:
-                  name: cover_image
+                  name: shipping_address
                   type: varchar(255)
               - column:
                   name: is_deleted

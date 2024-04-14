@@ -1,7 +1,7 @@
 package ua.bookstore.online.repository;
 
 import org.springframework.data.jpa.domain.Specification;
-import ua.bookstore.online.dto.AbstractSearchParameters;
+import ua.bookstore.online.dto.serch.parameters.AbstractSearchParameters;
 
 public interface SpecificationBuilder<T, P extends AbstractSearchParameters> {
     Specification<T> build(P parameters);
