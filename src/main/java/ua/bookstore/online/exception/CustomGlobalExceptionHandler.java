@@ -1,6 +1,9 @@
 package ua.bookstore.online.exception;
 
-import java.sql.SQLIntegrityConstraintViolationException;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ua.bookstore.online.dto.ErrorResponseDto;
 
 @ControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -30,24 +34,32 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         List<String> errors = ex.getBindingResult().getAllErrors().stream()
                                 .map(this::getErrorMessage)
                                 .toList();
-        return getResponseEntity(HttpStatus.BAD_REQUEST, errors);
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", status);
+        body.put("errors", errors);
+        return new ResponseEntity<>(body, status);
     }
 
-    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    protected ResponseEntity<Object> handleMethodRepository(
-            SQLIntegrityConstraintViolationException ex) {
-        return getResponseEntity(HttpStatus.CONFLICT, ex.getMessage());
+    @ExceptionHandler(UniqueIsbnException.class)
+    protected ResponseEntity<ErrorResponseDto> handleMethodRepository(UniqueIsbnException ex) {
+        return getResponseEntity(CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(RegistrationException.class)
+    protected ResponseEntity<ErrorResponseDto> handleMethodRepository(RegistrationException ex) {
+        return getResponseEntity(CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    protected ResponseEntity<Object> handleMethodNotFound(EntityNotFoundException ex) {
-        return getResponseEntity(HttpStatus.NOT_FOUND, ex.getMessage());
+    protected ResponseEntity<ErrorResponseDto> handleMethodNotFound(EntityNotFoundException ex) {
+        return getResponseEntity(NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler({SpecificationProviderNotFoundException.class})
-    protected ResponseEntity<Object> handleMethodSpecificationProviderNotFound(
+    protected ResponseEntity<ErrorResponseDto> handleMethodSpecificationProviderNotFound(
             SpecificationProviderNotFoundException ex) {
-        return getResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        return getResponseEntity(INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     private String getErrorMessage(ObjectError e) {
@@ -59,11 +71,13 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return e.getDefaultMessage();
     }
 
-    private ResponseEntity<Object> getResponseEntity(HttpStatus status, Object errors) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", status.getReasonPhrase());
-        body.put("errors", errors);
-        return new ResponseEntity<>(body, status);
+    private ResponseEntity<ErrorResponseDto> getResponseEntity(HttpStatus status,
+            String error) {
+        ErrorResponseDto errorResponse = ErrorResponseDto.builder()
+                                                         .timeStamp(LocalDateTime.now())
+                                                         .status(status.getReasonPhrase())
+                                                         .error(error)
+                                                         .build();
+        return new ResponseEntity<>(errorResponse, status);
     }
 }
