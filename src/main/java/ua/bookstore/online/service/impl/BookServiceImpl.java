@@ -7,9 +7,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ua.bookstore.online.dto.book.BookDto;
 import ua.bookstore.online.dto.book.CreateBookRequestDto;
-import ua.bookstore.online.dto.serch.parameters.BookSearchParameters;
+import ua.bookstore.online.dto.search.parameters.BookSearchParameters;
 import ua.bookstore.online.exception.EntityNotFoundException;
-import ua.bookstore.online.exception.UniqIsbnException;
+import ua.bookstore.online.exception.UniqueIsbnException;
 import ua.bookstore.online.mapper.BookMapper;
 import ua.bookstore.online.model.Book;
 import ua.bookstore.online.repository.book.BookRepository;
@@ -26,7 +26,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto save(CreateBookRequestDto bookRequestDto) {
         if (bookRepository.findByIsbn(bookRequestDto.isbn()).isPresent()) {
-            throw new UniqIsbnException("Non uniq ISBN: " + bookRequestDto.isbn());
+            throw new UniqueIsbnException("Non uniq ISBN: " + bookRequestDto.isbn());
         }
         Book book = bookMapper.toModel(bookRequestDto);
         return bookMapper.toDto(bookRepository.save(book));
@@ -58,16 +58,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto update(Long id, CreateBookRequestDto bookRequestDto) {
-        List<Book> allByIdOrIsbn = bookRepository.findAllByIdOrIsbn(id, bookRequestDto.isbn());
-
-        if (allByIdOrIsbn.size() > 1) {
-            throw new UniqIsbnException("Book with ISBN "
-                    + bookRequestDto.isbn() + " already exist");
-        }
-
-        if (!allByIdOrIsbn.get(0).getId().equals(id)) {
-            throw new EntityNotFoundException("Can't find book to update by id " + id);
-        }
+        validateIsbnUniqueness(id, bookRequestDto);
 
         Book book = bookMapper.toModel(bookRequestDto);
         book.setId(id);
@@ -80,5 +71,17 @@ public class BookServiceImpl implements BookService {
             throw new EntityNotFoundException("Can't find book to delete by id " + id);
         }
         bookRepository.deleteById(id);
+    }
+
+    private void validateIsbnUniqueness(Long id, CreateBookRequestDto bookRequestDto) {
+        List<Book> allByIdOrIsbn = bookRepository.findAllByIdOrIsbn(id, bookRequestDto.isbn());
+        if (allByIdOrIsbn.size() > 1) {
+            throw new UniqueIsbnException("Book with ISBN "
+                    + bookRequestDto.isbn() + " already exist");
+        }
+
+        if (!allByIdOrIsbn.get(0).getId().equals(id)) {
+            throw new EntityNotFoundException("Can't find book to update by id " + id);
+        }
     }
 }

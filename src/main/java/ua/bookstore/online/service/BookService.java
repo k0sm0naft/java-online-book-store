@@ -4,7 +4,7 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import ua.bookstore.online.dto.book.BookDto;
 import ua.bookstore.online.dto.book.CreateBookRequestDto;
-import ua.bookstore.online.dto.serch.parameters.BookSearchParameters;
+import ua.bookstore.online.dto.search.parameters.BookSearchParameters;
 
 public interface BookService {
     BookDto save(CreateBookRequestDto bookRequestDto);
