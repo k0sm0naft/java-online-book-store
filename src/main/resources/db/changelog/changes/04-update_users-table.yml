@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: update_users-table
+      author: a.akymenko
+      changes:
+        - modifyDataType:
+            tableName: users
+            columnName: password
+            newDataType: varchar(255)
