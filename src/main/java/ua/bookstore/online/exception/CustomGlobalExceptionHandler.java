@@ -59,7 +59,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    protected ResponseEntity<ErrorResponseDto> handleMethodNotFound(AccessDeniedException ex) {
+    protected ResponseEntity<ErrorResponseDto> handleMethodAccessDenied(AccessDeniedException ex) {
         return getResponseEntity(FORBIDDEN, ex.getMessage());
     }
 
