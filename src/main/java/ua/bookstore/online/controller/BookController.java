@@ -35,7 +35,7 @@ import ua.bookstore.online.service.BookService;
 public class BookController {
     private final BookService bookService;
 
-    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new book", description = "Create a new book if isbn uniq")
@@ -52,7 +52,7 @@ public class BookController {
         return bookService.save(bookDto);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "Update a new book", description = "Update a new book if exist")
@@ -112,7 +112,7 @@ public class BookController {
         return bookService.getByParameters(bookSearchParameters, pageable);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponses(value = {

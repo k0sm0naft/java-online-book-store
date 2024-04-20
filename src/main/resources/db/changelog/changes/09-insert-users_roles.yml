@@ -11,7 +11,7 @@ databaseChangeLog:
                   valueComputed: (SELECT id FROM users WHERE email = 'admin@example.com')
               - column:
                   name: role_id
-                  valueComputed: (SELECT id FROM roles WHERE name = 'ADMIN')
+                  valueComputed: (SELECT id FROM roles WHERE name = 'ROLE_ADMIN')
         - insert:
             tableName: users_roles
             columns:
@@ -20,7 +20,7 @@ databaseChangeLog:
                   valueComputed: (SELECT id FROM users WHERE email = 'admin@example.com')
               - column:
                   name: role_id
-                  valueComputed: (SELECT id FROM roles WHERE name = 'MANAGER')
+                  valueComputed: (SELECT id FROM roles WHERE name = 'ROLE_MANAGER')
         - insert:
             tableName: users_roles
             columns:
@@ -29,7 +29,7 @@ databaseChangeLog:
                   valueComputed: (SELECT id FROM users WHERE email = 'admin@example.com')
               - column:
                   name: role_id
-                  valueComputed: (SELECT id FROM roles WHERE name = 'USER')
+                  valueComputed: (SELECT id FROM roles WHERE name = 'ROLE_USER')
         - insert:
             tableName: users_roles
             columns:
@@ -38,7 +38,7 @@ databaseChangeLog:
                   valueComputed: (SELECT id FROM users WHERE email = 'manager@example.com')
               - column:
                   name: role_id
-                  valueComputed: (SELECT id FROM roles WHERE name = 'MANAGER')
+                  valueComputed: (SELECT id FROM roles WHERE name = 'ROLE_MANAGER')
         - insert:
             tableName: users_roles
             columns:
@@ -47,7 +47,7 @@ databaseChangeLog:
                   valueComputed: (SELECT id FROM users WHERE email = 'manager@example.com')
               - column:
                   name: role_id
-                  valueComputed: (SELECT id FROM roles WHERE name = 'USER')
+                  valueComputed: (SELECT id FROM roles WHERE name = 'ROLE_USER')
         - insert:
             tableName: users_roles
             columns:
@@ -56,7 +56,7 @@ databaseChangeLog:
                   valueComputed: (SELECT id FROM users WHERE email = 'user1@example.com')
               - column:
                   name: role_id
-                  valueComputed: (SELECT id FROM roles WHERE name = 'USER')
+                  valueComputed: (SELECT id FROM roles WHERE name = 'ROLE_USER')
         - insert:
             tableName: users_roles
             columns:
@@ -65,7 +65,7 @@ databaseChangeLog:
                   valueComputed: (SELECT id FROM users WHERE email = 'user2@example.com')
               - column:
                   name: role_id
-                  valueComputed: (SELECT id FROM roles WHERE name = 'USER')
+                  valueComputed: (SELECT id FROM roles WHERE name = 'ROLE_USER')
         - insert:
             tableName: users_roles
             columns:
@@ -74,7 +74,7 @@ databaseChangeLog:
                   valueComputed: (SELECT id FROM users WHERE email = 'user3@example.com')
               - column:
                   name: role_id
-                  valueComputed: (SELECT id FROM roles WHERE name = 'USER')
+                  valueComputed: (SELECT id FROM roles WHERE name = 'ROLE_USER')
         - insert:
             tableName: users_roles
             columns:
@@ -83,4 +83,4 @@ databaseChangeLog:
                   valueComputed: (SELECT id FROM users WHERE email = 'user4@example.com')
               - column:
                   name: role_id
-                  valueComputed: (SELECT id FROM roles WHERE name = 'USER')
+                  valueComputed: (SELECT id FROM roles WHERE name = 'ROLE_USER')
