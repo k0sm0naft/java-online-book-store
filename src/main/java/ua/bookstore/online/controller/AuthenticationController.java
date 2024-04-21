@@ -53,6 +53,8 @@ public class AuthenticationController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Successfully login"),
             @ApiResponse(responseCode = "400", description = "Invalid request body",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "Credentials is wrong",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     public UserLoginResponseDto login(@RequestBody @Valid UserLoginRequestDto userRequestDto) {

@@ -43,6 +43,8 @@ public class BookController {
             @ApiResponse(responseCode = "201", description = "Successfully created"),
             @ApiResponse(responseCode = "400", description = "Invalid request body",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "Required authorization",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "403", description = "Not enough access rights",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "409", description = "Conflict - the isbn non uniq",
@@ -59,6 +61,8 @@ public class BookController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Successfully updated"),
             @ApiResponse(responseCode = "400", description = "Invalid request body",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "Required authorization",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "403", description = "Not enough access rights",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
@@ -78,6 +82,8 @@ public class BookController {
     @Operation(summary = "Return single book by id", description = "Return single book by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
+            @ApiResponse(responseCode = "401", description = "Required authorization",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Book with this id not exist",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
@@ -91,7 +97,9 @@ public class BookController {
     @Operation(summary = "Return page of books",
             description = "Return page of books with pagination and sorting")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved")
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
+            @ApiResponse(responseCode = "401", description = "Required authorization",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
     })
     public List<BookDto> getAll(
             @Parameter(description = "Parameters for pagination") Pageable pageable
@@ -106,7 +114,9 @@ public class BookController {
             description = "Return filtered page of books with pagination and sorting. "
                     + "Parameters: title, author, isbn, price")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved")
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
+            @ApiResponse(responseCode = "401", description = "Required authorization",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
     })
     public List<BookDto> searchBooks(Pageable pageable, BookSearchParameters bookSearchParameters) {
         return bookService.getByParameters(bookSearchParameters, pageable);
@@ -117,6 +127,8 @@ public class BookController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No content - successfully deleted"),
+            @ApiResponse(responseCode = "401", description = "Required authorization",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "403", description = "Not enough access rights",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Not found - wrong id",

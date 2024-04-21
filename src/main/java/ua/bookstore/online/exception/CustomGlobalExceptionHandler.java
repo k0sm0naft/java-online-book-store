@@ -4,7 +4,9 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import io.jsonwebtoken.JwtException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,16 +16,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ua.bookstore.online.dto.ErrorResponseDto;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
@@ -63,6 +66,11 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return getResponseEntity(FORBIDDEN, ex.getMessage());
     }
 
+    @ExceptionHandler({JwtException.class, AuthenticationException.class})
+    protected ResponseEntity<ErrorResponseDto> handleAuthenticationException(Exception ex) {
+        return getResponseEntity(UNAUTHORIZED, ex.getMessage());
+    }
+
     @ExceptionHandler({SpecificationProviderNotFoundException.class})
     protected ResponseEntity<ErrorResponseDto> handleSpecificationProviderNotFound(
             SpecificationProviderNotFoundException ex) {
@@ -78,13 +86,14 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return e.getDefaultMessage();
     }
 
-    private ResponseEntity<ErrorResponseDto> getResponseEntity(HttpStatus status,
-            String error) {
-        ErrorResponseDto errorResponse = ErrorResponseDto.builder()
-                                                         .timeStamp(LocalDateTime.now())
-                                                         .status(status.getReasonPhrase())
-                                                         .error(error)
-                                                         .build();
-        return new ResponseEntity<>(errorResponse, status);
+    public ResponseEntity<ErrorResponseDto> getResponseEntity(HttpStatus status, String error) {
+        return ResponseEntity
+                .status(status)
+                .body(ErrorResponseDto
+                        .builder()
+                        .timeStamp(LocalDateTime.now())
+                        .status(status.getReasonPhrase())
+                        .error(error)
+                        .build());
     }
 }
