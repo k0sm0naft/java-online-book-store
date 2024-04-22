@@ -44,7 +44,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(UniqueIsbnException.class)
-    protected ResponseEntity<ErrorResponseDto> handleRepository(UniqueIsbnException ex) {
+    protected ResponseEntity<ErrorResponseDto> handleUniqueIsbn(UniqueIsbnException ex) {
         return getResponseEntity(CONFLICT, ex.getMessage());
     }
 
