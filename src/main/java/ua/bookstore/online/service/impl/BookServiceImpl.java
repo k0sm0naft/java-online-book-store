@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.bookstore.online.dto.book.BookDto;
 import ua.bookstore.online.dto.book.CreateBookRequestDto;
 import ua.bookstore.online.dto.search.parameters.BookSearchParameters;
@@ -23,6 +24,7 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
 
+    @Transactional
     @Override
     public BookDto save(CreateBookRequestDto bookRequestDto) {
         if (bookRepository.findByIsbn(bookRequestDto.isbn()).isPresent()) {
@@ -56,6 +58,7 @@ public class BookServiceImpl implements BookService {
                              .toList();
     }
 
+    @Transactional
     @Override
     public BookDto update(Long id, CreateBookRequestDto bookRequestDto) {
         validateIsbnUniqueness(id, bookRequestDto);
@@ -65,6 +68,7 @@ public class BookServiceImpl implements BookService {
         return bookMapper.toDto(bookRepository.save(book));
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
         if (bookRepository.findById(id).isEmpty()) {

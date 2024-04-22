@@ -1,0 +1,113 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-users
+      author: a.akymenko
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "admin@example.com"
+              - column:
+                  name: password
+                  value: "$2a$10$FLKXC1WauyvJkUGnVmXQw.nJ.l3Laojg4l99aHloJz.XXYAwumI3a"
+              - column:
+                  name: first_name
+                  value: "Admin"
+              - column:
+                  name: last_name
+                  value: "Adminovich"
+              - column:
+                  name: shipping_address
+                  value: "123 Admin St"
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "manager@example.com"
+              - column:
+                  name: password
+                  value: "$2a$10$FLKXC1WauyvJkUGnVmXQw.nJ.l3Laojg4l99aHloJz.XXYAwumI3a"
+              - column:
+                  name: first_name
+                  value: "Manager"
+              - column:
+                  name: last_name
+                  value: "Mana"
+              - column:
+                  name: shipping_address
+                  value: "852 Manager St"
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "user1@example.com"
+              - column:
+                  name: password
+                  value: "$2a$10$FLKXC1WauyvJkUGnVmXQw.nJ.l3Laojg4l99aHloJz.XXYAwumI3a"
+              - column:
+                  name: first_name
+                  value: "User"
+              - column:
+                  name: last_name
+                  value: "One"
+              - column:
+                  name: shipping_address
+                  value: "456 User St"
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "user2@example.com"
+              - column:
+                  name: password
+                  value: "$2a$10$FLKXC1WauyvJkUGnVmXQw.nJ.l3Laojg4l99aHloJz.XXYAwumI3a"
+              - column:
+                  name: first_name
+                  value: "User"
+              - column:
+                  name: last_name
+                  value: "Two"
+              - column:
+                  name: shipping_address
+                  value: "789 User St"
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "user3@example.com"
+              - column:
+                  name: password
+                  value: "$2a$10$FLKXC1WauyvJkUGnVmXQw.nJ.l3Laojg4l99aHloJz.XXYAwumI3a"
+              - column:
+                  name: first_name
+                  value: "User"
+              - column:
+                  name: last_name
+                  value: "Three"
+              - column:
+                  name: shipping_address
+                  value: "101 User St"
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "user4@example.com"
+              - column:
+                  name: password
+                  value: "$2a$10$FLKXC1WauyvJkUGnVmXQw.nJ.l3Laojg4l99aHloJz.XXYAwumI3a"
+              - column:
+                  name: first_name
+                  value: "User"
+              - column:
+                  name: last_name
+                  value: "Four"
+              - column:
+                  name: shipping_address
+                  value: "111 User St"

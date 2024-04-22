@@ -1,0 +1,320 @@
+databaseChangeLog:
+    - changeSet:
+          id: insert-books
+          author: a.akymenko
+          changes:
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "To Kill a Mockingbird"
+                        - column:
+                              name: author
+                              value: "Harper Lee"
+                        - column:
+                              name: isbn
+                              value: "9780061120084"
+                        - column:
+                              name: price
+                              value: "10.99"
+                        - column:
+                              name: description
+                              value: "Fiction, Classic. Scout Finch, a young girl in a quiet southern town, is about to experience dramatic events that will affect the rest of her life."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/to-kill-a-mockingbird.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "1984"
+                        - column:
+                              name: author
+                              value: "George Orwell"
+                        - column:
+                              name: isbn
+                              value: "9780451524935"
+                        - column:
+                              name: price
+                              value: "12.99"
+                        - column:
+                              name: description
+                              value: "Fiction, Dystopian. Winston Smith wrestles with oppression in Oceania, a place where the Party scrutinizes human actions with ever-watchful Big Brother."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/1984.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "Pride and Prejudice"
+                        - column:
+                              name: author
+                              value: "Jane Austen"
+                        - column:
+                              name: isbn
+                              value: "9780141439518"
+                        - column:
+                              name: price
+                              value: "9.99"
+                        - column:
+                              name: description
+                              value: "Fiction, Romance. Set in rural England in the early 19th century, it is the story of Mr. and Mrs. Bennet's five unmarried daughters after the rich and eligible Mr. Bingley and his status-conscious friend, Mr. Darcy, have moved into their neighborhood."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/pride-and-prejudice.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "To the Lighthouse"
+                        - column:
+                              name: author
+                              value: "Virginia Woolf"
+                        - column:
+                              name: isbn
+                              value: "9780156907392"
+                        - column:
+                              name: price
+                              value: "11.99"
+                        - column:
+                              name: description
+                              value: "Fiction, Modernism. The novel centres on the Ramsay family and their visits to the Isle of Skye in Scotland between 1910 and 1920."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/to-the-lighthouse.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "The Great Gatsby"
+                        - column:
+                              name: author
+                              value: "F. Scott Fitzgerald"
+                        - column:
+                              name: isbn
+                              value: "9780743273565"
+                        - column:
+                              name: price
+                              value: "10.99"
+                        - column:
+                              name: description
+                              value: "Fiction, Jazz Age, Romance. Jay Gatsby's parties are as legendary as his riches. Once a poor farm boy, Gatsby now lives in a mansion."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/the-great-gatsby.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "Moby-Dick"
+                        - column:
+                              name: author
+                              value: "Herman Melville"
+                        - column:
+                              name: isbn
+                              value: "9781503280781"
+                        - column:
+                              name: price
+                              value: "14.99"
+                        - column:
+                              name: description
+                              value: "Fiction, Adventure. Ishmael, a sailor, recounts the ill-fated voyage of a whaling ship captained by Ahab, who is hell-bent on revenge against the giant white whale that crippled him."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/moby-dick.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "Jane Eyre"
+                        - column:
+                              name: author
+                              value: "Charlotte Brontë"
+                        - column:
+                              name: isbn
+                              value: "9780141441146"
+                        - column:
+                              name: price
+                              value: "9.99"
+                        - column:
+                              name: description
+                              value: "Fiction, Gothic, Romance. Jane Eyre follows the emotions and experiences of its title character, from her youth as an orphan at Gateshead Hall to her marriage to Edward Rochester."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/jane-eyre.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "The Catcher in the Rye"
+                        - column:
+                              name: author
+                              value: "J.D. Salinger"
+                        - column:
+                              name: isbn
+                              value: "9780316769488"
+                        - column:
+                              name: price
+                              value: "11.99"
+                        - column:
+                              name: description
+                              value: "Fiction, Coming-of-Age. Holden Caulfield, a teenager from New York City, tells the story of three days in his life, spent in Manhattan, as he wanders around and encounters various characters."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/the-catcher-in-the-rye.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "The Odyssey"
+                        - column:
+                              name: author
+                              value: "Homer"
+                        - column:
+                              name: isbn
+                              value: "9780393089059"
+                        - column:
+                              name: price
+                              value: "13.99"
+                        - column:
+                              name: description
+                              value: "Epic Poetry, Mythology. The story revolves around the hero Odysseus (Ulysses), king of Ithaca, and his journey home after the fall of Troy."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/the-odyssey.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "Frankenstein"
+                        - column:
+                              name: author
+                              value: "Mary Shelley"
+                        - column:
+                              name: isbn
+                              value: "9780141439471"
+                        - column:
+                              name: price
+                              value: "10.99"
+                        - column:
+                              name: description
+                              value: "Fiction, Horror, Science Fiction, Gothic. Victor Frankenstein, a young scientist, creates a sapient creature in an unorthodox scientific experiment."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/frankenstein.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "War and Peace"
+                        - column:
+                              name: author
+                              value: "Leo Tolstoy"
+                        - column:
+                              name: isbn
+                              value: "9780199232765"
+                        - column:
+                              name: price
+                              value: "15.99"
+                        - column:
+                              name: description
+                              value: "Fiction, Historical. Epic in scale and size, it is regarded as one of the central works of world literature."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/war-and-peace.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "Hamlet"
+                        - column:
+                              name: author
+                              value: "William Shakespeare"
+                        - column:
+                              name: isbn
+                              value: "9780743477123"
+                        - column:
+                              name: price
+                              value: "8.99"
+                        - column:
+                              name: description
+                              value: "Drama, Tragedy. The play vividly portrays both true and feigned madness – from overwhelming grief to seething rage – and explores themes of treachery, revenge, incest, and moral corruption."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/hamlet.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "The Lord of the Rings"
+                        - column:
+                              name: author
+                              value: "J.R.R. Tolkien"
+                        - column:
+                              name: isbn
+                              value: "9780261103252"
+                        - column:
+                              name: price
+                              value: "17.99"
+                        - column:
+                              name: description
+                              value: "Fantasy, High Fantasy, Adventure. The story began as a sequel to Tolkien's 1937 fantasy novel The Hobbit, but developed into a much larger work."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/the-lord-of-the-rings.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "Crime and Punishment"
+                        - column:
+                              name: author
+                              value: "Fyodor Dostoevsky"
+                        - column:
+                              name: isbn
+                              value: "9780140449136"
+                        - column:
+                              name: price
+                              value: "11.99"
+                        - column:
+                              name: description
+                              value: "Fiction, Psychological Thriller. Crime and Punishment tells the story of a poor and talented student, Raskolnikov, and his decision to commit a murder and his subsequent attempts to evade the consequences."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/crime-and-punishment.jpg"
+              - insert:
+                    tableName: books
+                    columns:
+                        - column:
+                              name: title
+                              value: "The Picture of Dorian Gray"
+                        - column:
+                              name: author
+                              value: "Oscar Wilde"
+                        - column:
+                              name: isbn
+                              value: "9780141439570"
+                        - column:
+                              name: price
+                              value: "9.99"
+                        - column:
+                              name: description
+                              value: "Fiction, Gothic, Horror. Dorian Gray, a beautiful and narcissistic young man, accepts the influence of cynical aesthete Lord Henry Wotton and decides to pursue a hedonistic lifestyle."
+                        - column:
+                              name: cover_image
+                              value: "https://example.com/the-picture-of-dorian-gray.jpg"

@@ -1,6 +1,7 @@
 package ua.bookstore.online.exception;
 
 import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -12,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,22 +44,27 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(UniqueIsbnException.class)
-    protected ResponseEntity<ErrorResponseDto> handleMethodRepository(UniqueIsbnException ex) {
+    protected ResponseEntity<ErrorResponseDto> handleUniqueIsbn(UniqueIsbnException ex) {
         return getResponseEntity(CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(RegistrationException.class)
-    protected ResponseEntity<ErrorResponseDto> handleMethodRepository(RegistrationException ex) {
+    protected ResponseEntity<ErrorResponseDto> handleRegistration(RegistrationException ex) {
         return getResponseEntity(CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    protected ResponseEntity<ErrorResponseDto> handleMethodNotFound(EntityNotFoundException ex) {
+    protected ResponseEntity<ErrorResponseDto> handleNotFound(EntityNotFoundException ex) {
         return getResponseEntity(NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<ErrorResponseDto> handleAccessDenied(AccessDeniedException ex) {
+        return getResponseEntity(FORBIDDEN, ex.getMessage());
+    }
+
     @ExceptionHandler({SpecificationProviderNotFoundException.class})
-    protected ResponseEntity<ErrorResponseDto> handleMethodSpecificationProviderNotFound(
+    protected ResponseEntity<ErrorResponseDto> handleSpecificationProviderNotFound(
             SpecificationProviderNotFoundException ex) {
         return getResponseEntity(INTERNAL_SERVER_ERROR, ex.getMessage());
     }

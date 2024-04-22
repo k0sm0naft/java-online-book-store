@@ -12,6 +12,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,12 +35,15 @@ import ua.bookstore.online.service.BookService;
 public class BookController {
     private final BookService bookService;
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new book", description = "Create a new book if isbn uniq")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created"),
             @ApiResponse(responseCode = "400", description = "Invalid request body",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "403", description = "Not enough access rights",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "409", description = "Conflict - the isbn non uniq",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
@@ -48,12 +52,15 @@ public class BookController {
         return bookService.save(bookDto);
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "Update a new book", description = "Update a new book if exist")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Successfully updated"),
             @ApiResponse(responseCode = "400", description = "Invalid request body",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "403", description = "Not enough access rights",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "409", description = "Conflict - the isbn non uniq",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
@@ -65,6 +72,7 @@ public class BookController {
         return bookService.update(id, bookDto);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Return single book by id", description = "Return single book by id")
@@ -77,6 +85,7 @@ public class BookController {
         return bookService.getById(id);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Return page of books",
@@ -90,6 +99,7 @@ public class BookController {
         return bookService.getAll(pageable);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Return filtered page of books",
@@ -102,10 +112,13 @@ public class BookController {
         return bookService.getByParameters(bookSearchParameters, pageable);
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No content - successfully deleted"),
+            @ApiResponse(responseCode = "403", description = "Not enough access rights",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Not found - wrong id",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
