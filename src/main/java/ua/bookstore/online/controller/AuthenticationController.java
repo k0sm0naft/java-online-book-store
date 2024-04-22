@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ua.bookstore.online.dto.ErrorResponseDto;
+import ua.bookstore.online.dto.user.UserLoginRequestDto;
+import ua.bookstore.online.dto.user.UserLoginResponseDto;
 import ua.bookstore.online.dto.user.UserRegistrationRequestDto;
 import ua.bookstore.online.dto.user.UserResponseDto;
 import ua.bookstore.online.exception.RegistrationException;
+import ua.bookstore.online.security.AuthenticationService;
 import ua.bookstore.online.service.UserService;
 
 @Tag(name = "Authentication management",
@@ -27,6 +30,7 @@ import ua.bookstore.online.service.UserService;
 @RequestMapping(value = "/auth")
 public class AuthenticationController {
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/registration")
     @ResponseStatus(HttpStatus.CREATED)
@@ -41,5 +45,19 @@ public class AuthenticationController {
     public UserResponseDto register(@RequestBody @Valid UserRegistrationRequestDto userRequestDto)
             throws RegistrationException {
         return userService.register(userRequestDto);
+    }
+
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(summary = "Login user", description = "Login user by email and password")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "Successfully login"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "Wrong credentials",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+    })
+    public UserLoginResponseDto login(@RequestBody @Valid UserLoginRequestDto userRequestDto) {
+        return authenticationService.authenticate(userRequestDto);
     }
 }
