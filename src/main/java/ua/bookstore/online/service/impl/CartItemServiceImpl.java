@@ -10,28 +10,35 @@ import ua.bookstore.online.mapper.CartItemMapper;
 import ua.bookstore.online.model.Book;
 import ua.bookstore.online.model.CartItem;
 import ua.bookstore.online.model.ShoppingCart;
+import ua.bookstore.online.repository.book.BookRepository;
 import ua.bookstore.online.repository.cart.item.CartItemRepository;
-import ua.bookstore.online.service.BookService;
 import ua.bookstore.online.service.CartItemService;
 
 @Service
 @RequiredArgsConstructor
 public class CartItemServiceImpl implements CartItemService {
-    private final BookService bookService;
+    public static final int ONE_MORE = 1;
+    private final BookRepository bookRepository;
     private final CartItemRepository cartItemRepository;
     private final CartItemMapper cartItemMapper;
 
     @Override
     public CartItemResponseDto add(CartItemRequestDto requestDto, ShoppingCart shoppingCart) {
-        Book book = new Book();
-        book.setId(requestDto.bookId());
-        book.setTitle(bookService.getById(book.getId()).title());
+        Book book = bookRepository.findById(requestDto.bookId()).orElseThrow(
+                () -> new EntityNotFoundException("Book not found by id " + requestDto.bookId()));
 
-        CartItem cartItem = new CartItem();
-        cartItem.setQuantity(requestDto.quantity());
-        cartItem.setShoppingCart(shoppingCart);
-        cartItem.setBook(book);
-
+        CartItem cartItem = cartItemRepository.findByBookAndShoppingCart(book, shoppingCart)
+                                               .map(item -> {
+                                                   item.setQuantity(item.getQuantity() + ONE_MORE);
+                                                   return item;
+                                               })
+                                               .orElseGet(() -> {
+                                                   CartItem newCartItem = new CartItem();
+                                                   newCartItem.setQuantity(requestDto.quantity());
+                                                   newCartItem.setShoppingCart(shoppingCart);
+                                                   newCartItem.setBook(book);
+                                                   return newCartItem;
+                                               });
         return cartItemMapper.toDto(cartItemRepository.save(cartItem));
     }
 
