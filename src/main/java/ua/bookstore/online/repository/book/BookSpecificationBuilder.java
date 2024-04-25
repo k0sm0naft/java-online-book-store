@@ -27,6 +27,7 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book, Book
 
         String[] parameters = switch (parameter) {
             case TITLE -> bookSearchParameters.getTitles();
+            case CATEGORY -> bookSearchParameters.getCategoryIds();
             case AUTHOR -> bookSearchParameters.getAuthors();
             case ISBN -> bookSearchParameters.getIsbns();
             case PRICE -> {

@@ -2,13 +2,10 @@ package ua.bookstore.online.dto.book;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
-import java.util.Set;
 
-public record BookDto(
+public record BookDtoWithoutCategoryIds(
         @Schema(example = "15", nullable = true)
         Long id,
-        @Schema(example = "[1, 2, 5]")
-        Set<Long> categoryIds,
         @Schema(example = "Title of the book", nullable = true)
         String title,
         @Schema(example = "Book Author", nullable = true)

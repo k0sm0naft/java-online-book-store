@@ -1,0 +1,330 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-books_categories
+      author: a.akymenko
+      changes:
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780061120084')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fiction')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780061120084')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Classic')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780451524935')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fiction')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780451524935')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Dystopian')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780141439518')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fiction')
+
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780141439518')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Romance')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780156907392')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fiction')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780156907392')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Modernism')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780743273565')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fiction')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780743273565')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Jazz Age')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780743273565')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Romance')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9781503280781')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fiction')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9781503280781')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Adventure')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780141441146')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fiction')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780141441146')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Gothic')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780141441146')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Romance')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780316769488')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fiction')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780316769488')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Coming-of-Age')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780393089059')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Epic Poetry')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780393089059')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Mythology')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780141439471')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fiction')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780141439471')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Horror')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780141439471')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Science Fiction')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780141439471')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Gothic')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780199232765')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fiction')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780199232765')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Historical')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780743477123')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Drama')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780743477123')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Tragedy')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780261103252')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fantasy')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780261103252')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'High Fantasy')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780261103252')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Adventure')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780140449136')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fiction')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780140449136')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Psychological Thriller')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780141439570')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Fiction')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780141439570')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Gothic')
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueComputed: (SELECT id FROM books WHERE isbn = '9780141439570')
+              - column:
+                  name: category_id
+                  valueComputed: (SELECT id FROM categories WHERE name = 'Horror')

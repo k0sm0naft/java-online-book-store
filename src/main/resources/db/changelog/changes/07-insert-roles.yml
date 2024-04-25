@@ -1,17 +1,17 @@
 databaseChangeLog:
-    - changeSet:
-          id: insert-roles
-          author: a.akymenko
-          changes:
-              - insert:
-                    tableName: roles
-                    columns:
-                        - column: {name: name, value: "ROLE_ADMIN"}
-              - insert:
-                    tableName: roles
-                    columns:
-                        - column: {name: name, value: "ROLE_MANAGER"}
-              - insert:
-                    tableName: roles
-                    columns:
-                        - column: {name: name, value: "ROLE_USER"}
+  - changeSet:
+      id: insert-roles
+      author: a.akymenko
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column: { name: name, value: "ROLE_ADMIN" }
+        - insert:
+            tableName: roles
+            columns:
+              - column: { name: name, value: "ROLE_MANAGER" }
+        - insert:
+            tableName: roles
+            columns:
+              - column: { name: name, value: "ROLE_USER" }

@@ -1,0 +1,176 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-categories
+      author: a.akymenko
+      changes:
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Fiction"
+              - column:
+                  name: description
+                  value: "Fiction typically involves imaginary characters, events, and settings, often exploring themes of the human condition."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Classic"
+              - column:
+                  name: description
+                  value: "Classic literature represents timeless works of literature that have had a significant impact on culture and society."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Dystopian"
+              - column:
+                  name: description
+                  value: "Dystopian fiction presents a bleak vision of society, often exploring themes of oppression, surveillance, and societal decay."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Romance"
+              - column:
+                  name: description
+                  value: "Romance novels focus on romantic love and relationships, typically featuring a central love story and a happy ending."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Modernism"
+              - column:
+                  name: description
+                  value: "Modernist literature reflects the societal changes and upheavals of the early 20th century, often characterized by experimental styles and themes of alienation."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Jazz Age"
+              - column:
+                  name: description
+                  value: "The Jazz Age refers to the cultural and artistic boom of the 1920s, characterized by jazz music, flapper culture, and significant social change."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Adventure"
+              - column:
+                  name: description
+                  value: "Adventure literature features exciting and often dangerous journeys, quests, or expeditions undertaken by the protagonist."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Gothic"
+              - column:
+                  name: description
+                  value: "Gothic fiction explores themes of horror, death, and the supernatural, often set in eerie or decaying landscapes."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Coming-of-Age"
+              - column:
+                  name: description
+                  value: "Coming-of-age stories depict the growth and maturation of a protagonist as they navigate the challenges and experiences of adolescence."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Epic Poetry"
+              - column:
+                  name: description
+                  value: "Epic poetry tells grand narratives of heroic deeds and legendary figures, often featuring gods, monsters, and epic battles."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Mythology"
+              - column:
+                  name: description
+                  value: "Mythology explores the legends, gods, and supernatural beings of ancient cultures, often conveying moral lessons and cultural values."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Horror"
+              - column:
+                  name: description
+                  value: "Horror fiction elicits feelings of fear, terror, and suspense, often through supernatural or psychological elements."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Historical"
+              - column:
+                  name: description
+                  value: "Historical fiction is set in the past and often draws on real historical events, figures, and settings to create immersive and authentic narratives."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Science Fiction"
+              - column:
+                  name: description
+                  value: "Science fiction explores speculative concepts, technologies, and societies, often set in the future or on distant planets."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "High Fantasy"
+              - column:
+                  name: description
+                  value: "High fantasy transports readers to imaginative worlds filled with magic, mythical creatures, and epic quests."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Psychological Thriller"
+              - column:
+                  name: description
+                  value: "Psychological thrillers delve into the dark recesses of the human mind, often featuring intense psychological suspense and intrigue."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Drama"
+              - column:
+                  name: description
+                  value: "Drama books delve into the complexities of human emotion, relationships, and societal issues. They often explore themes of conflict, tragedy, and personal growth, captivating readers with compelling narratives and rich character development."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Tragedy"
+              - column:
+                  name: description
+                  value: "Tragedy books tell stories of human suffering, loss, and downfall. They explore themes of fate, moral dilemmas, and the inherent flaws of humanity, evoking powerful emotions and offering profound insights into the human condition."
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: "Fantasy"
+              - column:
+                  name: description
+                  value: "Fantasy books transport readers to magical realms filled with mythical creatures, epic quests, and enchanting adventures. They ignite the imagination, weaving tales of heroes and villains, sorcery and prophecy, and realms where anything is possible."

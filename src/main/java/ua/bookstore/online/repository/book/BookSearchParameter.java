@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum BookSearchParameter {
     TITLE("title"),
+    CATEGORY("categories"),
     AUTHOR("author"),
     ISBN("isbn"),
     PRICE("price");
