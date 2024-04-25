@@ -1,4 +1,4 @@
-package ua.bookstore.online.repository.cart.item;
+package ua.bookstore.online.repository.shopping.cart.item;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

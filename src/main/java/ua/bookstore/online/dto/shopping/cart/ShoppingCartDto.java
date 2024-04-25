@@ -1,10 +1,10 @@
 package ua.bookstore.online.dto.shopping.cart;
 
-import java.util.Set;
+import java.util.List;
 
 public record ShoppingCartDto(
         Long id,
         Long userId,
-        Set<CartItemResponseDto> cartItems
+        List<CartItemResponseDto> cartItems
 ) {
 }

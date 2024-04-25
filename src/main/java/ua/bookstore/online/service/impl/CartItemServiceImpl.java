@@ -11,7 +11,7 @@ import ua.bookstore.online.model.Book;
 import ua.bookstore.online.model.CartItem;
 import ua.bookstore.online.model.ShoppingCart;
 import ua.bookstore.online.repository.book.BookRepository;
-import ua.bookstore.online.repository.cart.item.CartItemRepository;
+import ua.bookstore.online.repository.shopping.cart.item.CartItemRepository;
 import ua.bookstore.online.service.CartItemService;
 
 @Service
