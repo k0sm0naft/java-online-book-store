@@ -25,7 +25,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Transactional
     public ShoppingCartDto getShoppingCart(User user) {
         ShoppingCart shoppingCart =
-                cartRepository.findByUserWithCartItems(user)
+                cartRepository.findShoppingCartByUser(user)
                               .orElseGet(() -> cartRepository.save(new ShoppingCart(user)));
         return cartMapper.toDto(shoppingCart);
     }
