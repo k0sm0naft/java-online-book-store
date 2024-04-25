@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ua.bookstore.online.dto.ErrorResponseDto;
 import ua.bookstore.online.dto.book.BookDto;
-import ua.bookstore.online.dto.book.BookDtoWithoutCategoryIds;
 import ua.bookstore.online.dto.book.CreateBookRequestDto;
 import ua.bookstore.online.dto.search.parameters.BookSearchParameters;
 import ua.bookstore.online.service.BookService;
@@ -102,7 +101,7 @@ public class BookController {
             @ApiResponse(responseCode = "401", description = "Required authorization",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
     })
-    public List<BookDtoWithoutCategoryIds> getAll(
+    public List<BookDto> getAll(
             @Parameter(description = "Parameters for pagination") Pageable pageable
     ) {
         return bookService.getAll(pageable);
@@ -119,7 +118,7 @@ public class BookController {
             @ApiResponse(responseCode = "401", description = "Required authorization",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
     })
-    public List<BookDtoWithoutCategoryIds> searchBooks(Pageable pageable,
+    public List<BookDto> searchBooks(Pageable pageable,
             BookSearchParameters bookSearchParameters) {
         return bookService.getByParameters(bookSearchParameters, pageable);
     }

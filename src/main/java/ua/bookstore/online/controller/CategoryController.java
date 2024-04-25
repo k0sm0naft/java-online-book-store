@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -48,7 +49,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "403", description = "Not enough access rights",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
-    public CategoryResponseDto createCategory(@RequestBody CategoryRequestDto categoryDto) {
+    public CategoryResponseDto createCategory(@RequestBody @Valid CategoryRequestDto categoryDto) {
         return categoryService.save(categoryDto);
     }
 
@@ -65,8 +66,10 @@ public class CategoryController {
             @ApiResponse(responseCode = "403", description = "Not enough access rights",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
-    public CategoryResponseDto updateCategory(@PathVariable Long id, @RequestBody
-            CategoryRequestDto categoryDto) {
+    public CategoryResponseDto updateCategory(
+            @PathVariable Long id,
+            @RequestBody @Valid CategoryRequestDto categoryDto
+    ) {
         return categoryService.update(id, categoryDto);
     }
 
@@ -79,8 +82,8 @@ public class CategoryController {
             @ApiResponse(responseCode = "401", description = "Required authorization",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
     })
-    public List<CategoryResponseDto> getAll() {
-        return categoryService.findAll();
+    public List<CategoryResponseDto> getAll(Pageable pageable) {
+        return categoryService.findAll(pageable);
     }
 
     @GetMapping("/{id}")

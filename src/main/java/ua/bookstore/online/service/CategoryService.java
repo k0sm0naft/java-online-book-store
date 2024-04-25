@@ -2,11 +2,12 @@ package ua.bookstore.online.service;
 
 import java.util.List;
 import java.util.Set;
+import org.springframework.data.domain.Pageable;
 import ua.bookstore.online.dto.category.CategoryRequestDto;
 import ua.bookstore.online.dto.category.CategoryResponseDto;
 
 public interface CategoryService {
-    List<CategoryResponseDto> findAll();
+    List<CategoryResponseDto> findAll(Pageable pageable);
 
     CategoryResponseDto getById(Long id);
 

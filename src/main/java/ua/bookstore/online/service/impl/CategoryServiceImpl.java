@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.bookstore.online.dto.category.CategoryRequestDto;
 import ua.bookstore.online.dto.category.CategoryResponseDto;
@@ -20,8 +21,8 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
 
     @Override
-    public List<CategoryResponseDto> findAll() {
-        return categoryRepository.findAll().stream()
+    public List<CategoryResponseDto> findAll(Pageable pageable) {
+        return categoryRepository.findAll(pageable).stream()
                                  .map(categoryMapper::toResponseDto)
                                  .toList();
     }

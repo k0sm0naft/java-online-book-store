@@ -10,11 +10,11 @@ import ua.bookstore.online.dto.search.parameters.BookSearchParameters;
 public interface BookService {
     BookDto save(CreateBookRequestDto bookRequestDto);
 
-    List<BookDtoWithoutCategoryIds> getAll(Pageable pageable);
+    List<BookDto> getAll(Pageable pageable);
 
     BookDto getById(Long id);
 
-    List<BookDtoWithoutCategoryIds> getByParameters(BookSearchParameters searchParameters,
+    List<BookDto> getByParameters(BookSearchParameters searchParameters,
             Pageable pageable);
 
     BookDto update(Long id, CreateBookRequestDto bookRequestDto);
