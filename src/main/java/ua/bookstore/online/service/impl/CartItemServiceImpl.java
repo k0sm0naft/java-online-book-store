@@ -17,7 +17,6 @@ import ua.bookstore.online.service.CartItemService;
 @Service
 @RequiredArgsConstructor
 public class CartItemServiceImpl implements CartItemService {
-    public static final int ONE_MORE = 1;
     private final BookRepository bookRepository;
     private final CartItemRepository cartItemRepository;
     private final CartItemMapper cartItemMapper;
@@ -29,7 +28,7 @@ public class CartItemServiceImpl implements CartItemService {
 
         CartItem cartItem = cartItemRepository.findByBookAndShoppingCart(book, shoppingCart)
                                                .map(item -> {
-                                                   item.setQuantity(item.getQuantity() + ONE_MORE);
+                                                   item.setQuantity(item.getQuantity());
                                                    return item;
                                                })
                                                .orElseGet(() -> {
