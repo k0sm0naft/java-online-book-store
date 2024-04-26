@@ -14,6 +14,8 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Getter
 @Setter
@@ -29,6 +31,7 @@ public class ShoppingCart {
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
+    @Cascade(CascadeType.REMOVE)
     @OneToMany(mappedBy = "shoppingCart")
     private Set<CartItem> cartItems;
 
