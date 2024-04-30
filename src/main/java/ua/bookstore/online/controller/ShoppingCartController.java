@@ -45,7 +45,7 @@ public class ShoppingCartController {
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     public ShoppingCartDto getShoppingCart(@AuthenticationPrincipal User user) {
-        return shoppingCartService.getShoppingCart(user);
+        return shoppingCartService.getShoppingCartWithCartItems(user);
     }
 
     @PostMapping

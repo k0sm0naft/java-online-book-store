@@ -7,7 +7,7 @@ import ua.bookstore.online.dto.shopping.cart.ShoppingCartDto;
 import ua.bookstore.online.model.User;
 
 public interface ShoppingCartService {
-    ShoppingCartDto getShoppingCart(User user);
+    ShoppingCartDto getShoppingCartWithCartItems(User user);
 
     QuantityDto updateCartItem(Long cartItemId, QuantityDto quantityDto, User user);
 

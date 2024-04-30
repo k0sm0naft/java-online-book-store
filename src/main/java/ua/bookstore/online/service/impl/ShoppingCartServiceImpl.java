@@ -23,7 +23,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     @Transactional
-    public ShoppingCartDto getShoppingCart(User user) {
+    public ShoppingCartDto getShoppingCartWithCartItems(User user) {
         ShoppingCart shoppingCart =
                 cartRepository.findShoppingCartByUser(user)
                               .orElseGet(() -> cartRepository.save(new ShoppingCart(user)));
@@ -33,25 +33,25 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     @Transactional
     public CartItemResponseDto addCartItem(CartItemRequestDto requestDto, User user) {
-        ShoppingCart shoppingCart = getCart(user);
+        ShoppingCart shoppingCart = getExistedOrNewCart(user);
         return cartItemService.add(requestDto, shoppingCart);
     }
 
     @Override
     @Transactional
     public QuantityDto updateCartItem(Long cartItemId, QuantityDto quantityDto, User user) {
-        ShoppingCart shoppingCart = getCart(user);
+        ShoppingCart shoppingCart = getExistedOrNewCart(user);
         return cartItemService.changeQuantity(cartItemId, quantityDto, shoppingCart);
     }
 
     @Override
     @Transactional
     public void removeCartItem(Long cartItemId, User user) {
-        ShoppingCart shoppingCart = getCart(user);
+        ShoppingCart shoppingCart = getExistedOrNewCart(user);
         cartItemService.remove(cartItemId, shoppingCart);
     }
 
-    private ShoppingCart getCart(User user) {
+    private ShoppingCart getExistedOrNewCart(User user) {
         return cartRepository.findByUser(user)
                              .orElseGet(() -> cartRepository.save(
                                      new ShoppingCart(user)));
