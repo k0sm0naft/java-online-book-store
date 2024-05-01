@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import ua.bookstore.online.model.Order;
 
 public record StatusDto(
-        @JsonProperty(value = "status")
+        @JsonProperty(value = "status", required = true)
         Order.Status status
 ) {
 }

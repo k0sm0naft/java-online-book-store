@@ -1,5 +1,6 @@
 package ua.bookstore.online.exception;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -14,17 +15,19 @@ import java.util.Map;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import ua.bookstore.online.dto.ErrorResponseDto;
 
 @RestControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -39,42 +42,51 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         List<String> errors = ex.getBindingResult().getAllErrors().stream()
                                 .map(this::getErrorMessage)
                                 .toList();
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", status);
-        body.put("errors", errors);
-        return new ResponseEntity<>(body, status);
+        return ResponseEntity
+                .of(getBody(HttpStatus.valueOf(status.value()), errors))
+                .build();
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+        return ResponseEntity
+                .of(getBody(HttpStatus.valueOf(status.value()), ex.getLocalizedMessage()))
+                .build();
     }
 
     @ExceptionHandler(UniqueIsbnException.class)
-    protected ResponseEntity<ErrorResponseDto> handleUniqueIsbn(UniqueIsbnException ex) {
+    protected ResponseEntity<ProblemDetail> handleUniqueIsbn(UniqueIsbnException ex) {
         return getResponseEntity(CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(RegistrationException.class)
-    protected ResponseEntity<ErrorResponseDto> handleRegistration(RegistrationException ex) {
+    protected ResponseEntity<ProblemDetail> handleRegistration(RegistrationException ex) {
         return getResponseEntity(CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    protected ResponseEntity<ErrorResponseDto> handleNotFound(EntityNotFoundException ex) {
+    protected ResponseEntity<ProblemDetail> handleNotFound(EntityNotFoundException ex) {
         return getResponseEntity(NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    protected ResponseEntity<ErrorResponseDto> handleAccessDenied(AccessDeniedException ex) {
+    protected ResponseEntity<ProblemDetail> handleAccessDenied(AccessDeniedException ex) {
         return getResponseEntity(FORBIDDEN, ex.getMessage());
     }
 
     @ExceptionHandler({JwtException.class, AuthenticationException.class})
-    protected ResponseEntity<ErrorResponseDto> handleAuthenticationException(Exception ex) {
+    protected ResponseEntity<ProblemDetail> handleAuthenticationException(Exception ex) {
         return getResponseEntity(UNAUTHORIZED, ex.getMessage());
     }
 
     @ExceptionHandler({Exception.class})
-    protected ResponseEntity<ErrorResponseDto> handleNotIncludedExceptions(
+    protected ResponseEntity<ProblemDetail> handleNotIncludedExceptions(
             Exception ex) {
-        return getResponseEntity(INTERNAL_SERVER_ERROR, ex.getMessage());
+        return getResponseEntity(INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());
     }
 
     private String getErrorMessage(ObjectError e) {
@@ -86,14 +98,16 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return e.getDefaultMessage();
     }
 
-    public ResponseEntity<ErrorResponseDto> getResponseEntity(HttpStatus status, String error) {
-        return ResponseEntity
-                .status(status)
-                .body(ErrorResponseDto
-                        .builder()
-                        .timeStamp(LocalDateTime.now())
-                        .status(status.getReasonPhrase())
-                        .error(error)
-                        .build());
+    private ResponseEntity<ProblemDetail> getResponseEntity(HttpStatus status, String error) {
+        return ResponseEntity.of(getBody(status, error)).build();
+    }
+
+    private ProblemDetail getBody(HttpStatus status, Object error) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(status);
+        Map<String, Object> detail = new LinkedHashMap<>();
+        detail.put("error", error);
+        detail.put("timestamp", LocalDateTime.now().toString());
+        problemDetail.setProperties(detail);
+        return problemDetail;
     }
 }

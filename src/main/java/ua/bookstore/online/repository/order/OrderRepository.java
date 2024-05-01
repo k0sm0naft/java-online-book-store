@@ -10,10 +10,10 @@ import ua.bookstore.online.model.Order;
 import ua.bookstore.online.model.User;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    @EntityGraph(attributePaths = {"orderItems", "orderItems.book"})
+    @EntityGraph(attributePaths = "orderItems.book")
     List<Order> findAllByUser(User user, Pageable pageable);
 
-    @Modifying(flushAutomatically = true)
+    @Modifying
     @Query("UPDATE Order o SET o.status = :status WHERE o.id = :id")
     int updateStatusById(Long id, Order.Status status);
 }

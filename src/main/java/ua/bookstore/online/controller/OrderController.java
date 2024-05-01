@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ua.bookstore.online.dto.ErrorResponseDto;
 import ua.bookstore.online.dto.order.OrderItemResponseDto;
 import ua.bookstore.online.dto.order.OrderRequestDto;
 import ua.bookstore.online.dto.order.OrderResponseDto;
@@ -44,9 +44,9 @@ public class OrderController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created"),
             @ApiResponse(responseCode = "400", description = "Invalid request body",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
             @ApiResponse(responseCode = "401", description = "Required authorization",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     })
     public OrderResponseDto createOrder(@RequestBody @Valid OrderRequestDto requestDto,
             @AuthenticationPrincipal User user) {
@@ -61,7 +61,7 @@ public class OrderController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "401", description = "Required authorization",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     })
     public List<OrderResponseDto> getOrderHistory(@AuthenticationPrincipal User user,
             Pageable pageable) {
@@ -74,13 +74,13 @@ public class OrderController {
     @Operation(summary = "Update order status",
             description = "Update order status by ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successfully updated"),
+            @ApiResponse(responseCode = "202", description = "Successfully updated"),
             @ApiResponse(responseCode = "400", description = "Invalid request body",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
             @ApiResponse(responseCode = "401", description = "Required authorization",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
             @ApiResponse(responseCode = "403", description = "Not enough access rights",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     })
     public void updateStatus(@PathVariable Long id, @RequestBody StatusDto statusDto) {
         orderService.updateStatus(id, statusDto);
@@ -92,9 +92,9 @@ public class OrderController {
     @Operation(summary = "Return all cart items from certain order",
             description = "Return all cart items from certain order by order ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successfully retrieved"),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "401", description = "Required authorization",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     })
     public List<OrderItemResponseDto> getAllCartItems(@PathVariable Long orderId,
             @AuthenticationPrincipal User user, Pageable pageable) {
@@ -107,9 +107,9 @@ public class OrderController {
     @Operation(summary = "Return specific cart item from certain order",
             description = "Return cart item by ID from certain order by order ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successfully retrieved"),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "401", description = "Required authorization",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     })
     public OrderItemResponseDto getCartItem(@PathVariable Long id, @PathVariable Long orderId,
             @AuthenticationPrincipal User user) {

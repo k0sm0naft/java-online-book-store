@@ -9,12 +9,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ua.bookstore.online.dto.ErrorResponseDto;
 import ua.bookstore.online.dto.user.UserLoginRequestDto;
 import ua.bookstore.online.dto.user.UserLoginResponseDto;
 import ua.bookstore.online.dto.user.UserRegistrationRequestDto;
@@ -38,9 +38,9 @@ public class AuthenticationController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully registered"),
             @ApiResponse(responseCode = "400", description = "Invalid request body",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
             @ApiResponse(responseCode = "409", description = "Conflict - the email already exist",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
     })
     public UserResponseDto register(@RequestBody @Valid UserRegistrationRequestDto userRequestDto)
             throws RegistrationException {
@@ -53,9 +53,9 @@ public class AuthenticationController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Successfully login"),
             @ApiResponse(responseCode = "400", description = "Invalid request body",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
             @ApiResponse(responseCode = "401", description = "Wrong credentials",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     })
     public UserLoginResponseDto login(@RequestBody @Valid UserLoginRequestDto userRequestDto) {
         return authenticationService.authenticate(userRequestDto);
