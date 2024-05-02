@@ -71,9 +71,9 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return getResponseEntity(UNAUTHORIZED, ex.getMessage());
     }
 
-    @ExceptionHandler({SpecificationProviderNotFoundException.class})
-    protected ResponseEntity<ErrorResponseDto> handleSpecificationProviderNotFound(
-            SpecificationProviderNotFoundException ex) {
+    @ExceptionHandler({Exception.class})
+    protected ResponseEntity<ErrorResponseDto> handleNotIncludedExceptions(
+            Exception ex) {
         return getResponseEntity(INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
