@@ -1,7 +1,5 @@
 package ua.bookstore.online.service.impl;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -34,9 +32,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderResponseDto saveOrder(OrderRequestDto requestDto, User user) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findShoppingCartByUser(user).orElseThrow(
-                () -> new EntityNotFoundException(
-                        "Can't find shopping cart from user: " + user.getEmail()));
+        ShoppingCart shoppingCart =
+                shoppingCartRepository.findByUserWithCartItems(user).orElseThrow(
+                        () -> new EntityNotFoundException(
+                                "Can't find shopping cart from user: " + user.getEmail()));
         Set<CartItem> cartItems = shoppingCart.getCartItems();
         if (cartItems.isEmpty()) {
             throw new EntityNotFoundException("Can't find cartItems from user: " + user.getEmail());
@@ -44,7 +43,8 @@ public class OrderServiceImpl implements OrderService {
 
         shoppingCartRepository.deleteById(shoppingCart.getId());
 
-        Order order = createOrder(requestDto, user, cartItems);
+        Order order =
+                orderMapper.toModel(requestDto, user, orderItemService.convertFrom(cartItems));
         Order savedOrder = orderRepository.save(order);
         return orderMapper.toDto(savedOrder);
     }
@@ -75,26 +75,5 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderItemResponseDto getCartItem(Long id, Long orderId, User user) {
         return orderItemService.getById(id, orderId, user);
-    }
-
-    private BigDecimal getTotalPrice(User user, Set<CartItem> cartItems) {
-        return cartItems.stream()
-                        .map(cartItem -> cartItem.getBook().getPrice().multiply(
-                                BigDecimal.valueOf(cartItem.getQuantity())))
-                        .reduce(BigDecimal::add)
-                        .orElseThrow(() -> new ArithmeticException(
-                                "Can't calculate total sum for user order. User: "
-                                        + user.getEmail()));
-    }
-
-    private Order createOrder(OrderRequestDto requestDto, User user, Set<CartItem> cartItems) {
-        Order order = new Order();
-        order.setUser(user);
-        order.setOrderDate(LocalDateTime.now());
-        order.setTotal(getTotalPrice(user, cartItems));
-        order.setShippingAddress(requestDto.shippingAddress());
-        order.setStatus(Order.Status.PENDING);
-        order.setOrderItems(orderItemService.createOrderItem(order, cartItems));
-        return order;
     }
 }

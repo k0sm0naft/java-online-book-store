@@ -31,7 +31,7 @@ public class CartItemServiceImpl implements CartItemService {
                                   return item;
                               })
                               .orElseGet(() ->
-                                      cartItemMapper.getCartItem(requestDto, shoppingCart, book));
+                                      cartItemMapper.toModel(requestDto, shoppingCart, book));
         return cartItemMapper.toDto(cartItemRepository.save(cartItem));
     }
 

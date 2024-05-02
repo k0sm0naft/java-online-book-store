@@ -10,7 +10,6 @@ import ua.bookstore.online.dto.order.OrderItemResponseDto;
 import ua.bookstore.online.exception.EntityNotFoundException;
 import ua.bookstore.online.mapper.OrderItemMapper;
 import ua.bookstore.online.model.CartItem;
-import ua.bookstore.online.model.Order;
 import ua.bookstore.online.model.OrderItem;
 import ua.bookstore.online.model.User;
 import ua.bookstore.online.repository.order.item.OrderItemRepository;
@@ -23,16 +22,9 @@ public class OrderItemServiceImpl implements OrderItemService {
     private final OrderItemMapper orderItemMapper;
 
     @Override
-    public Set<OrderItem> createOrderItem(Order order, Set<CartItem> cartItems) {
+    public Set<OrderItem> convertFrom(Set<CartItem> cartItems) {
         return cartItems.stream()
-                        .map(cartItem -> {
-                            OrderItem orderItem = new OrderItem();
-                            orderItem.setOrder(order);
-                            orderItem.setBook(cartItem.getBook());
-                            orderItem.setPrice(cartItem.getBook().getPrice());
-                            orderItem.setQuantity(cartItem.getQuantity());
-                            return orderItem;
-                        })
+                        .map(orderItemMapper::toModel)
                         .collect(Collectors.toSet());
     }
 
