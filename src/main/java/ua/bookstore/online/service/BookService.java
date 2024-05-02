@@ -6,6 +6,7 @@ import ua.bookstore.online.dto.book.BookDto;
 import ua.bookstore.online.dto.book.BookDtoWithoutCategoryIds;
 import ua.bookstore.online.dto.book.CreateBookRequestDto;
 import ua.bookstore.online.dto.search.parameters.BookSearchParameters;
+import ua.bookstore.online.model.Book;
 
 public interface BookService {
     BookDto save(CreateBookRequestDto bookRequestDto);
@@ -22,4 +23,6 @@ public interface BookService {
     void delete(Long id);
 
     List<BookDtoWithoutCategoryIds> getByCategoryId(Long id, Pageable pageable);
+
+    Book getBook(Long id);
 }

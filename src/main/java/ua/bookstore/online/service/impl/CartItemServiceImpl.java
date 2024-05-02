@@ -10,34 +10,28 @@ import ua.bookstore.online.mapper.CartItemMapper;
 import ua.bookstore.online.model.Book;
 import ua.bookstore.online.model.CartItem;
 import ua.bookstore.online.model.ShoppingCart;
-import ua.bookstore.online.repository.book.BookRepository;
 import ua.bookstore.online.repository.shopping.cart.item.CartItemRepository;
+import ua.bookstore.online.service.BookService;
 import ua.bookstore.online.service.CartItemService;
 
 @Service
 @RequiredArgsConstructor
 public class CartItemServiceImpl implements CartItemService {
-    private final BookRepository bookRepository;
+    private final BookService bookService;
     private final CartItemRepository cartItemRepository;
     private final CartItemMapper cartItemMapper;
 
     @Override
     public CartItemResponseDto add(CartItemRequestDto requestDto, ShoppingCart shoppingCart) {
-        Book book = bookRepository.findById(requestDto.bookId()).orElseThrow(
-                () -> new EntityNotFoundException("Book not found by id " + requestDto.bookId()));
+        Book book = bookService.getBook(requestDto.bookId());
 
         CartItem cartItem = cartItemRepository.findByBookAndShoppingCart(book, shoppingCart)
-                                               .map(item -> {
-                                                   item.setQuantity(item.getQuantity());
-                                                   return item;
-                                               })
-                                               .orElseGet(() -> {
-                                                   CartItem newCartItem = new CartItem();
-                                                   newCartItem.setQuantity(requestDto.quantity());
-                                                   newCartItem.setShoppingCart(shoppingCart);
-                                                   newCartItem.setBook(book);
-                                                   return newCartItem;
-                                               });
+                              .map(item -> {
+                                  item.setQuantity(requestDto.quantity());
+                                  return item;
+                              })
+                              .orElseGet(() ->
+                                      cartItemMapper.getCartItem(requestDto, shoppingCart, book));
         return cartItemMapper.toDto(cartItemRepository.save(cartItem));
     }
 
