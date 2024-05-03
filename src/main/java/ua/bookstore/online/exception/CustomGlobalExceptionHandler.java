@@ -40,9 +40,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         List<String> errors = ex.getBindingResult().getAllErrors().stream()
                                 .map(this::getErrorMessage)
                                 .toList();
-        return ResponseEntity
-                .of(getBody(HttpStatus.valueOf(status.value()), errors))
-                .build();
+        return getResponseEntity(HttpStatus.valueOf(status.value()), errors);
     }
 
     @Override
@@ -51,38 +49,36 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
             HttpHeaders headers,
             HttpStatusCode status,
             WebRequest request) {
-        return ResponseEntity
-                .of(getBody(HttpStatus.valueOf(status.value()), ex.getLocalizedMessage()))
-                .build();
+        return getResponseEntity(HttpStatus.valueOf(status.value()), ex.getLocalizedMessage());
     }
 
     @ExceptionHandler(UniqueIsbnException.class)
-    protected ResponseEntity<ProblemDetail> handleUniqueIsbn(UniqueIsbnException ex) {
+    protected ResponseEntity<Object> handleUniqueIsbn(UniqueIsbnException ex) {
         return getResponseEntity(CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(RegistrationException.class)
-    protected ResponseEntity<ProblemDetail> handleRegistration(RegistrationException ex) {
+    protected ResponseEntity<Object> handleRegistration(RegistrationException ex) {
         return getResponseEntity(CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    protected ResponseEntity<ProblemDetail> handleNotFound(EntityNotFoundException ex) {
+    protected ResponseEntity<Object> handleNotFound(EntityNotFoundException ex) {
         return getResponseEntity(NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    protected ResponseEntity<ProblemDetail> handleAccessDenied(AccessDeniedException ex) {
+    protected ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex) {
         return getResponseEntity(FORBIDDEN, ex.getMessage());
     }
 
     @ExceptionHandler({JwtException.class, AuthenticationException.class})
-    protected ResponseEntity<ProblemDetail> handleAuthenticationException(Exception ex) {
+    protected ResponseEntity<Object> handleAuthenticationException(Exception ex) {
         return getResponseEntity(UNAUTHORIZED, ex.getMessage());
     }
 
     @ExceptionHandler({Exception.class})
-    protected ResponseEntity<ProblemDetail> handleNotIncludedExceptions(
+    protected ResponseEntity<Object> handleNotIncludedExceptions(
             Exception ex) {
         return getResponseEntity(INTERNAL_SERVER_ERROR, ex.getLocalizedMessage());
     }
@@ -96,16 +92,12 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return e.getDefaultMessage();
     }
 
-    private ResponseEntity<ProblemDetail> getResponseEntity(HttpStatus status, String error) {
-        return ResponseEntity.of(getBody(status, error)).build();
-    }
-
-    private ProblemDetail getBody(HttpStatus status, Object error) {
+    private ResponseEntity<Object> getResponseEntity(HttpStatus status, Object error) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
         Map<String, Object> detail = new LinkedHashMap<>();
         detail.put("error", error);
         detail.put("timestamp", LocalDateTime.now().toString());
         problemDetail.setProperties(detail);
-        return problemDetail;
+        return ResponseEntity.of(problemDetail).build();
     }
 }
