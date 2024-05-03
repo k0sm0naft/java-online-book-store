@@ -15,7 +15,7 @@ public interface CartItemMapper {
     @Mapping(target = "bookTitle", source = "book.title")
     CartItemResponseDto toDto(CartItem cartItem);
 
-    default CartItem getCartItem(
+    default CartItem toModel(
             CartItemRequestDto requestDto, ShoppingCart shoppingCart, Book book
     ) {
         CartItem newCartItem = new CartItem();
