@@ -7,7 +7,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Set;
+import lombok.Builder;
 
+@Builder
 public record CreateBookRequestDto(
         @Schema(example = "Title of the book", nullable = true)
         @NotBlank

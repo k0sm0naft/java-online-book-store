@@ -3,7 +3,9 @@ package ua.bookstore.online.dto.book;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.Set;
+import lombok.Builder;
 
+@Builder
 public record BookDto(
         @Schema(example = "15", nullable = true)
         Long id,
