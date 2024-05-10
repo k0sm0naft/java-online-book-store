@@ -10,12 +10,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_2;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_3;
-import static ua.bookstore.online.utils.ConstantAndMethod.createCategory;
-import static ua.bookstore.online.utils.ConstantAndMethod.getCategoryRequest;
-import static ua.bookstore.online.utils.ConstantAndMethod.getFiction;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +34,7 @@ import ua.bookstore.online.repository.category.CategoryRepository;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceImplTest {
+    private static final long ID = 5L;
     @InjectMocks
     private CategoryServiceImpl categoryService;
     @Mock
@@ -57,7 +52,8 @@ class CategoryServiceImplTest {
 
         // Mocking behavior
         when(categoryRepository.findAll(any(Pageable.class))).thenReturn(categories);
-        when(categoryMapper.toResponseDto(any(Category.class))).thenReturn(getFiction());
+        when(categoryMapper.toResponseDto(any(Category.class))).thenReturn(
+                getResponseDto(createCategory()));
 
         // When
         List<CategoryResponseDto> actual = categoryService.findAll(pageable);
@@ -76,22 +72,22 @@ class CategoryServiceImplTest {
     void getById_ExistingCategory_ReturnsCategoryResponseDto() {
         // Given
         Category existingCategory = createCategory();
-        existingCategory.setId(ID_1);
-        CategoryResponseDto responseDto = getFiction();
+        existingCategory.setId(ID);
+        CategoryResponseDto responseDto = getResponseDto(existingCategory);
 
         // Mocking behavior
-        when(categoryRepository.findById(ID_1)).thenReturn(Optional.of(existingCategory));
+        when(categoryRepository.findById(ID)).thenReturn(Optional.of(existingCategory));
         when(categoryMapper.toResponseDto(existingCategory)).thenReturn(responseDto);
 
         // When
-        CategoryResponseDto actual = categoryService.getById(ID_1);
+        CategoryResponseDto actual = categoryService.getById(ID);
 
         // Then
         assertNotNull(actual);
         EqualsBuilder.reflectionEquals(responseDto, actual);
 
         // Verify method calls
-        verify(categoryRepository).findById(ID_1);
+        verify(categoryRepository).findById(ID);
         verify(categoryMapper).toResponseDto(existingCategory);
         verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
@@ -100,16 +96,16 @@ class CategoryServiceImplTest {
     @DisplayName("Get non-existing category by id, throws exception")
     void getById_NonExistingCategory_ThrowsException() {
         // Mocking behavior
-        when(categoryRepository.findById(ID_1)).thenReturn(java.util.Optional.empty());
+        when(categoryRepository.findById(ID)).thenReturn(java.util.Optional.empty());
 
         // When/Then
         Exception exception = assertThrows(EntityNotFoundException.class,
-                () -> categoryService.getById(ID_1));
+                () -> categoryService.getById(ID));
 
-        assertEquals("Can't find category by id:" + ID_1, exception.getMessage());
+        assertEquals("Can't find category by id:" + ID, exception.getMessage());
 
         // Verify method calls
-        verify(categoryRepository).findById(ID_1);
+        verify(categoryRepository).findById(ID);
         verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
 
@@ -117,15 +113,16 @@ class CategoryServiceImplTest {
     @DisplayName("Save new category successfully")
     void save_NewCategory_ReturnsCategoryResponseDto() {
         // Given
-        CategoryRequestDto requestDto = getCategoryRequest();
+        CategoryRequestDto requestDto = createRequestDto();
         Category categoryToSave = createCategory();
         Category savedCategory = createCategory();
-        savedCategory.setId(ID_1);
+        savedCategory.setId(ID);
+        CategoryResponseDto responseDto = getResponseDto(categoryToSave);
 
         // Mocking behavior
         when(categoryMapper.toModel(requestDto)).thenReturn(categoryToSave);
         when(categoryRepository.save(categoryToSave)).thenReturn(savedCategory);
-        when(categoryMapper.toResponseDto(savedCategory)).thenReturn(getFiction());
+        when(categoryMapper.toResponseDto(savedCategory)).thenReturn(responseDto);
 
         // When
         CategoryResponseDto actual = categoryService.save(requestDto);
@@ -145,26 +142,26 @@ class CategoryServiceImplTest {
     @DisplayName("Update existing category successfully")
     void update_ExistingCategory_ReturnsCategoryResponseDto() {
         // Given
-        CategoryRequestDto requestDto = getCategoryRequest();
+        CategoryRequestDto requestDto = createRequestDto();
         Category updatedCategory = createCategory();
-        updatedCategory.setId(ID_1);
-        CategoryResponseDto responseDto = getFiction();
+        updatedCategory.setId(ID);
+        CategoryResponseDto responseDto = getResponseDto(updatedCategory);
 
         // Mocking behavior
-        when(categoryRepository.existsById(ID_1)).thenReturn(true);
+        when(categoryRepository.existsById(ID)).thenReturn(true);
         when(categoryMapper.toModel(requestDto)).thenReturn(updatedCategory);
         when(categoryRepository.save(updatedCategory)).thenReturn(updatedCategory);
         when(categoryMapper.toResponseDto(updatedCategory)).thenReturn(responseDto);
 
         // When
-        CategoryResponseDto actual = categoryService.update(ID_1, requestDto);
+        CategoryResponseDto actual = categoryService.update(ID, requestDto);
 
         // Then
         assertNotNull(actual);
         EqualsBuilder.reflectionEquals(responseDto, actual);
 
         // Verify method calls
-        verify(categoryRepository).existsById(ID_1);
+        verify(categoryRepository).existsById(ID);
         verify(categoryMapper).toModel(requestDto);
         verify(categoryRepository).save(updatedCategory);
         verify(categoryMapper).toResponseDto(updatedCategory);
@@ -175,17 +172,17 @@ class CategoryServiceImplTest {
     @DisplayName("Update non-existing category, throws exception")
     void update_NonExistingCategory_ThrowsException() {
         // Mocking behavior
-        when(categoryRepository.existsById(ID_1)).thenReturn(false);
+        when(categoryRepository.existsById(ID)).thenReturn(false);
 
         // When
         Exception actual = assertThrows(EntityNotFoundException.class,
-                () -> categoryService.update(ID_1, getCategoryRequest()));
+                () -> categoryService.update(ID, createRequestDto()));
 
         // Then
-        assertEquals("Can't find category by id " + ID_1, actual.getMessage());
+        assertEquals("Can't find category by id " + ID, actual.getMessage());
 
         // Verify method calls
-        verify(categoryRepository).existsById(ID_1);
+        verify(categoryRepository).existsById(ID);
         verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
 
@@ -193,14 +190,14 @@ class CategoryServiceImplTest {
     @DisplayName("Delete existing category by ID")
     void deleteById_ExistingCategory_Ok() {
         // Mocking behavior
-        when(categoryRepository.findById(ID_1)).thenReturn(Optional.of(createCategory()));
+        when(categoryRepository.findById(ID)).thenReturn(Optional.of(createCategory()));
 
         // When
-        assertDoesNotThrow(() -> categoryService.deleteById(ID_1));
+        assertDoesNotThrow(() -> categoryService.deleteById(ID));
 
         // Verify method calls
-        verify(categoryRepository).findById(ID_1);
-        verify(categoryRepository).deleteById(ID_1);
+        verify(categoryRepository).findById(ID);
+        verify(categoryRepository).deleteById(ID);
         verifyNoMoreInteractions(categoryRepository);
     }
 
@@ -208,17 +205,17 @@ class CategoryServiceImplTest {
     @DisplayName("Delete non-existing category by ID, throws exception")
     void deleteById_NonExistingCategory_ThrowsException() {
         // Mocking behavior
-        when(categoryRepository.findById(ID_1)).thenReturn(Optional.empty());
+        when(categoryRepository.findById(ID)).thenReturn(Optional.empty());
 
         // When
         Exception exception = assertThrows(EntityNotFoundException.class,
-                () -> categoryService.deleteById(ID_1));
+                () -> categoryService.deleteById(ID));
 
         // Then
-        assertEquals("Can't find category to delete by id " + ID_1, exception.getMessage());
+        assertEquals("Can't find category to delete by id " + ID, exception.getMessage());
 
         // Verify method calls
-        verify(categoryRepository).findById(ID_1);
+        verify(categoryRepository).findById(ID);
         verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
 
@@ -226,10 +223,10 @@ class CategoryServiceImplTest {
     @DisplayName("Get all existing category IDs from provided IDs")
     void getAllExistedCategoryIdsFromIds_ValidIds_ReturnsExistingCategoryIds() {
         // Given
-        Set<Long> categoryIds = Set.of(ID_1, ID_2, ID_3);
+        Set<Long> categoryIds = Set.of(1L, 2L, 3L);
         Set<Category> existingCategories = Set.of(
-                new Category(ID_1),
-                new Category(ID_2)
+                new Category(1L),
+                new Category(2L)
         );
 
         // Mocking behavior
@@ -256,13 +253,35 @@ class CategoryServiceImplTest {
         Set<Long> emptyCategoryIds = Collections.emptySet();
 
         // When
-        Set<Long> actual = categoryService.getAllExistedCategoryIdsFromIds(emptyCategoryIds);
+        Set<Long> result = categoryService.getAllExistedCategoryIdsFromIds(emptyCategoryIds);
 
         // Then
-        assertTrue(actual.isEmpty(), "Should be empty but was not");
+        assertTrue(result.isEmpty());
 
         // Verify method calls
         verify(categoryRepository).findAllByIdIn(emptyCategoryIds);
         verifyNoMoreInteractions(categoryRepository);
+    }
+
+    private CategoryRequestDto createRequestDto() {
+        return CategoryRequestDto.builder()
+                                 .name("name")
+                                 .description("description")
+                                 .build();
+    }
+
+    private Category createCategory() {
+        Category category = new Category();
+        category.setName("name");
+        category.setDescription("description");
+        return category;
+    }
+
+    private CategoryResponseDto getResponseDto(Category category) {
+        return CategoryResponseDto.builder()
+                                  .id(category.getId())
+                                  .name(category.getName())
+                                  .description(category.getDescription())
+                                  .build();
     }
 }

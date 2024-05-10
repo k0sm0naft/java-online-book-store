@@ -10,20 +10,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static ua.bookstore.online.utils.ConstantAndMethod.AUTHOR;
-import static ua.bookstore.online.utils.ConstantAndMethod.CATEGORY_IDS;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ISBN;
-import static ua.bookstore.online.utils.ConstantAndMethod.PRICE;
-import static ua.bookstore.online.utils.ConstantAndMethod.TITLE;
-import static ua.bookstore.online.utils.ConstantAndMethod.createBook;
-import static ua.bookstore.online.utils.ConstantAndMethod.createBookRequestDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getBookDto;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,12 +34,19 @@ import ua.bookstore.online.exception.EntityNotFoundException;
 import ua.bookstore.online.exception.UniqueIsbnException;
 import ua.bookstore.online.mapper.BookMapper;
 import ua.bookstore.online.model.Book;
+import ua.bookstore.online.model.Category;
 import ua.bookstore.online.repository.book.BookRepository;
 import ua.bookstore.online.repository.book.BookSpecificationBuilder;
 import ua.bookstore.online.service.CategoryService;
 
 @ExtendWith(MockitoExtension.class)
 class BookServiceImplTest {
+    private static final Long ID = 15L;
+    private static final String ISBN = "123-456-789";
+    private static final String AUTHOR = "author";
+    private static final String TITLE = "title";
+    private static final BigDecimal PRICE = BigDecimal.valueOf(9.99);
+    private static final Set<Long> CATEGORY_IDS = Set.of(1L, 2L);
     @InjectMocks
     private BookServiceImpl bookService;
     @Mock
@@ -155,23 +154,22 @@ class BookServiceImplTest {
     void getById_ExistingId_ReturnsBookDto() {
         // Given
         Book bookFromRepository = createBook();
-        bookFromRepository.setId(ID_1);
+        bookFromRepository.setId(ID);
 
         // Mocking behavior
-        when(bookRepository.findByIdWithCategories(ID_1)).thenReturn(
-                Optional.of(bookFromRepository));
+        when(bookRepository.findByIdWithCategories(ID)).thenReturn(Optional.of(bookFromRepository));
         when(bookMapper.toDto(bookFromRepository)).thenReturn(
                 getBookDto(bookFromRepository));
 
         // When
-        BookDto result = bookService.getById(ID_1);
+        BookDto result = bookService.getById(ID);
 
         // Then
         BookDto expected = getBookDto(bookFromRepository);
         assertTrue(EqualsBuilder.reflectionEquals(expected, result));
 
         // Verify method calls
-        verify(bookRepository).findByIdWithCategories(ID_1);
+        verify(bookRepository).findByIdWithCategories(ID);
         verify(bookMapper).toDto(bookFromRepository);
         verifyNoMoreInteractions(bookRepository, bookMapper);
     }
@@ -180,14 +178,14 @@ class BookServiceImplTest {
     @DisplayName("Get non-existing book from DB throws exception")
     void getById_NonExistingId_ThrowsException() {
         // Mocking behavior for repository
-        when(bookRepository.findByIdWithCategories(ID_1)).thenReturn(Optional.empty());
+        when(bookRepository.findByIdWithCategories(ID)).thenReturn(Optional.empty());
 
         // When
         Exception actual =
-                assertThrows(EntityNotFoundException.class, () -> bookService.getById(ID_1));
+                assertThrows(EntityNotFoundException.class, () -> bookService.getById(ID));
 
         // Then
-        assertEquals("Book not found by id " + ID_1, actual.getMessage());
+        assertEquals("Book not found by id " + ID, actual.getMessage());
 
         // Verify method calls
         verifyNoMoreInteractions(bookRepository, bookMapper);
@@ -226,7 +224,7 @@ class BookServiceImplTest {
     void update_ExistingBook_ReturnsBookDto() {
         // Given
         Book existingBook = createBook();
-        existingBook.setId(ID_1);
+        existingBook.setId(ID);
         existingBook.setPrice(BigDecimal.TEN);
 
         // Mocking behavior
@@ -235,13 +233,13 @@ class BookServiceImplTest {
         mockingMapperMethods(existingBook);
 
         // When
-        BookDto actual = bookService.update(ID_1, createBookRequestDto());
+        BookDto actual = bookService.update(ID, createBookRequestDto());
 
         // Then
         assertTrue(EqualsBuilder.reflectionEquals(getBookDto(existingBook), actual));
 
         // Verify repository method calls
-        verify(bookRepository).findAllByIdOrIsbn(ID_1, ISBN);
+        verify(bookRepository).findAllByIdOrIsbn(ID, ISBN);
         verifySaveMethods();
         verifyMapperMethods();
         verifyNoMoreInteractions(bookRepository, categoryService, bookMapper);
@@ -254,14 +252,14 @@ class BookServiceImplTest {
         CreateBookRequestDto requestDto = createBookRequestDto();
 
         // Mocking behavior
-        when(bookRepository.findAllByIdOrIsbn(ID_1, ISBN)).thenReturn(List.of());
+        when(bookRepository.findAllByIdOrIsbn(ID, ISBN)).thenReturn(List.of());
 
         // When
         Exception actual = assertThrows(EntityNotFoundException.class,
-                () -> bookService.update(ID_1, requestDto));
+                () -> bookService.update(ID, requestDto));
 
         // Then
-        assertEquals("Can't find book to update by id " + ID_1, actual.getMessage());
+        assertEquals("Can't find book to update by id " + ID, actual.getMessage());
 
         // Verify method calls
         verifyNoMoreInteractions(bookRepository, categoryService, bookMapper);
@@ -273,16 +271,16 @@ class BookServiceImplTest {
         // Given
         CreateBookRequestDto requestDto = createBookRequestDto();
         Book existingBook = createBook();
-        existingBook.setId(ID_1);
+        existingBook.setId(ID);
         Book bookWithSameIsbn = createBook();
 
         // Mocking behavior
-        when(bookRepository.findAllByIdOrIsbn(ID_1, ISBN)).thenReturn(
+        when(bookRepository.findAllByIdOrIsbn(ID, ISBN)).thenReturn(
                 List.of(existingBook, bookWithSameIsbn));
 
         // When
         Exception actual = assertThrows(UniqueIsbnException.class,
-                () -> bookService.update(ID_1, requestDto));
+                () -> bookService.update(ID, requestDto));
 
         // Then
         assertEquals("Book with ISBN " + ISBN + " already exist", actual.getMessage());
@@ -297,7 +295,7 @@ class BookServiceImplTest {
         // Given
         CreateBookRequestDto requestDto = createBookRequestDto();
         Book existingBook = createBook();
-        existingBook.setId(ID_1);
+        existingBook.setId(ID);
         Set<Long> existedCategoriesIds = Set.of();
 
         // Mocking behavior
@@ -306,7 +304,7 @@ class BookServiceImplTest {
         // When
         Exception actual =
                 assertThrows(EntityNotFoundException.class,
-                        () -> bookService.update(ID_1, requestDto));
+                        () -> bookService.update(ID, requestDto));
 
         // Then
         assertEquals("Can't find categories with ids: " + CATEGORY_IDS, actual.getMessage());
@@ -319,14 +317,14 @@ class BookServiceImplTest {
     @DisplayName("Delete existing book returns void")
     void delete_ExistingBook_SuccessfullyDeleted() {
         // Mocking behavior
-        when(bookRepository.findById(ID_1)).thenReturn(Optional.of(new Book()));
+        when(bookRepository.findById(ID)).thenReturn(Optional.of(new Book()));
 
         // When
-        assertDoesNotThrow(() -> bookService.delete(ID_1));
+        assertDoesNotThrow(() -> bookService.delete(ID));
 
         // Verify method calls
-        verify(bookRepository).findById(ID_1);
-        verify(bookRepository).deleteById(ID_1);
+        verify(bookRepository).findById(ID);
+        verify(bookRepository).deleteById(ID);
         verifyNoMoreInteractions(bookRepository);
     }
 
@@ -334,14 +332,14 @@ class BookServiceImplTest {
     @DisplayName("Delete non-existing book throws exception")
     void delete_NonExistingBook_ThrowsException() {
         // Mocking behavior
-        when(bookRepository.findById(ID_1)).thenReturn(Optional.empty());
+        when(bookRepository.findById(ID)).thenReturn(Optional.empty());
 
         // When
         Exception exception = assertThrows(EntityNotFoundException.class,
-                () -> bookService.delete(ID_1));
+                () -> bookService.delete(ID));
 
         // Then
-        assertEquals("Can't find book to delete by id " + ID_1, exception.getMessage());
+        assertEquals("Can't find book to delete by id " + ID, exception.getMessage());
 
         // Verify method calls
         verifyNoMoreInteractions(bookRepository);
@@ -355,18 +353,18 @@ class BookServiceImplTest {
         List<Book> booksFromRepository = List.of(createBook(), createBook());
 
         // Mocking behavior
-        when(bookRepository.findAllByCategories_Id(ID_1, pageable)).thenReturn(booksFromRepository);
+        when(bookRepository.findAllByCategories_Id(ID, pageable)).thenReturn(booksFromRepository);
         when(bookMapper.toDtoWithoutCategories(any(Book.class))).thenReturn(
-                new BookDtoWithoutCategoryIds(ID_1, TITLE, AUTHOR, ISBN, PRICE, null, null));
+                new BookDtoWithoutCategoryIds(ID, TITLE, AUTHOR, ISBN, PRICE, null, null));
 
         // When
-        List<BookDtoWithoutCategoryIds> result = bookService.getByCategoryId(ID_1, pageable);
+        List<BookDtoWithoutCategoryIds> result = bookService.getByCategoryId(ID, pageable);
 
         // Then
         assertEquals(booksFromRepository.size(), result.size());
 
         // Verify method calls
-        verify(bookRepository).findAllByCategories_Id(ID_1, pageable);
+        verify(bookRepository).findAllByCategories_Id(ID, pageable);
         verify(bookMapper, times(booksFromRepository.size())).toDtoWithoutCategories(
                 any(Book.class));
         verifyNoMoreInteractions(bookRepository, bookMapper);
@@ -378,7 +376,7 @@ class BookServiceImplTest {
     }
 
     private void mockingForUpdateMethod(Book existingBook, Set<Long> categoryIds) {
-        when(bookRepository.findAllByIdOrIsbn(ID_1, ISBN)).thenReturn(List.of(existingBook));
+        when(bookRepository.findAllByIdOrIsbn(ID, ISBN)).thenReturn(List.of(existingBook));
         when(categoryService.getAllExistedCategoryIdsFromIds(CATEGORY_IDS)).thenReturn(
                 categoryIds);
     }
@@ -397,5 +395,44 @@ class BookServiceImplTest {
     private void verifyMapperMethods() {
         verify(bookMapper).toModel(any(CreateBookRequestDto.class));
         verify(bookMapper).toDto(any(Book.class));
+    }
+
+    private Set<Category> getCategories() {
+        return CATEGORY_IDS.stream()
+                           .map(Category::new)
+                           .collect(Collectors.toSet());
+    }
+
+    private CreateBookRequestDto createBookRequestDto() {
+        return CreateBookRequestDto.builder()
+                                   .title(TITLE)
+                                   .categoryIds(CATEGORY_IDS)
+                                   .author(AUTHOR)
+                                   .isbn(ISBN)
+                                   .price(PRICE)
+                                   .build();
+    }
+
+    private Book createBook() {
+        Book book = new Book();
+        book.setIsbn(ISBN);
+        book.setAuthor(AUTHOR);
+        book.setTitle(TITLE);
+        book.setPrice(PRICE);
+        book.setCategories(getCategories());
+        return book;
+    }
+
+    private BookDto getBookDto(Book book) {
+        return BookDto.builder()
+                      .categoryIds(
+                              book.getCategories().stream()
+                                  .map(Category::getId)
+                                  .collect(Collectors.toSet()))
+                      .title(book.getTitle())
+                      .author(book.getAuthor())
+                      .isbn(book.getIsbn())
+                      .price(book.getPrice())
+                      .build();
     }
 }

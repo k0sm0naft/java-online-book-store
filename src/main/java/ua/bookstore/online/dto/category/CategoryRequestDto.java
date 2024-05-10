@@ -2,8 +2,10 @@ package ua.bookstore.online.dto.category;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import org.hibernate.validator.constraints.Length;
 
+@Builder
 public record CategoryRequestDto(
         @NotBlank
         @Length(max = 50)

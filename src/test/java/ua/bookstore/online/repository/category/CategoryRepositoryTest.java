@@ -2,19 +2,21 @@ package ua.bookstore.online.repository.category;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ua.bookstore.online.utils.ConstantAndMethod.CLASSPATH_ADD_THREE_CATEGORIES_SQL;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.sql.DataSource;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.jdbc.Sql;
 import ua.bookstore.online.model.Category;
 
@@ -34,10 +36,19 @@ public class CategoryRepositoryTest {
         tearDown(dataSource);
     }
 
+    @SneakyThrows
+    static void tearDown(DataSource dataSource) {
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(true);
+            ScriptUtils.executeSqlScript(connection,
+                    new ClassPathResource("database/tear-down-db.sql"));
+        }
+    }
+
     @Test
     @DisplayName("Find all categories by IDs")
     @Sql(scripts = {
-            CLASSPATH_ADD_THREE_CATEGORIES_SQL
+            "classpath:database/categories/add-three-categories.sql"
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void findAllByIdIn_ReturnsCategoriesForGivenIds() {
         // Given
@@ -58,7 +69,7 @@ public class CategoryRepositoryTest {
     @Test
     @DisplayName("Find all categories by IDs when some IDs are invalid")
     @Sql(scripts = {
-            CLASSPATH_ADD_THREE_CATEGORIES_SQL
+            "classpath:database/categories/add-three-categories.sql"
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void findAllByIdIn_WithInvalidIds_ReturnsValidCategories() {
         // Given
