@@ -9,13 +9,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_FOR_BOOKS_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.ADD_THREE_BOOKS_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.ID;
+import static ua.bookstore.online.utils.ConstantAndMethod.TEAR_DOWN_DB_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.TITLE;
+import static ua.bookstore.online.utils.ConstantAndMethod.getMelville;
+import static ua.bookstore.online.utils.ConstantAndMethod.getOrwell;
+import static ua.bookstore.online.utils.ConstantAndMethod.getRequestDto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
@@ -39,13 +46,7 @@ import ua.bookstore.online.dto.book.CreateBookRequestDto;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BookControllerIntegrationTest {
-    private static final double PRICE = 12.99;
-    private static final Long EXISTING_ID = 1L;
     private static final String URI = "/books";
-    private static final String EXISTING_ISBN = "9780451524935";
-    private static final String EXISTING_AUTHOR = "George Orwell";
-    private static final String EXISTING_TITLE = "1984";
-    private static final Set<Long> EXISTING_CATEGORY_IDS = Set.of(1L, 2L);
     private static MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
@@ -70,7 +71,7 @@ class BookControllerIntegrationTest {
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource("database/tear-down-db.sql"));
+                    new ClassPathResource(TEAR_DOWN_DB_SQL));
         }
     }
 
@@ -78,12 +79,12 @@ class BookControllerIntegrationTest {
     @DisplayName("Create new book")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
     @Sql(scripts = {
-            "classpath:database/books/add-categories.sql"
+            ADD_CATEGORIES_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void createBook_CreateNewBook_ReturnsExpectedBook() throws Exception {
         // Given
-        CreateBookRequestDto requestDto = getRequestDto(EXISTING_TITLE);
-        BookDto expected = getOrwell(EXISTING_TITLE);
+        CreateBookRequestDto requestDto = getRequestDto(TITLE);
+        BookDto expected = getOrwell(TITLE);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         // When
@@ -106,9 +107,9 @@ class BookControllerIntegrationTest {
     @DisplayName("Update existing book")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
     @Sql(scripts = {
-            "classpath:database/books/add-categories.sql",
-            "classpath:database/books/add-three-books.sql",
-            "classpath:database/books/add-categories-for-books.sql"
+            ADD_CATEGORIES_SQL,
+            ADD_THREE_BOOKS_SQL,
+            ADD_CATEGORIES_FOR_BOOKS_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void updateBook_UpdateExisingBook_ReturnsExpectedBook() throws Exception {
         // Given
@@ -116,7 +117,7 @@ class BookControllerIntegrationTest {
         CreateBookRequestDto requestDto = getRequestDto(updatedTitle);
         BookDto expected = getOrwell(updatedTitle);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
-        String url = URI + "/" + EXISTING_ID;
+        String url = URI + "/" + ID;
 
         // When
         MvcResult result = mockMvc.perform(put(url)
@@ -138,14 +139,14 @@ class BookControllerIntegrationTest {
     @DisplayName("Get existing book by ID")
     @WithMockUser
     @Sql(scripts = {
-            "classpath:database/books/add-categories.sql",
-            "classpath:database/books/add-three-books.sql",
-            "classpath:database/books/add-categories-for-books.sql"
+            ADD_CATEGORIES_SQL,
+            ADD_THREE_BOOKS_SQL,
+            ADD_CATEGORIES_FOR_BOOKS_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getBookById_GetExistingBook_ReturnsExpectedBook() throws Exception {
         // Given
-        BookDto expected = getOrwell(EXISTING_TITLE);
-        String url = URI + "/" + EXISTING_ID;
+        BookDto expected = getOrwell(TITLE);
+        String url = URI + "/" + ID;
 
         // When
         MvcResult result = mockMvc.perform(get(url)
@@ -166,13 +167,13 @@ class BookControllerIntegrationTest {
     @DisplayName("Get two existing books")
     @WithMockUser
     @Sql(scripts = {
-            "classpath:database/books/add-categories.sql",
-            "classpath:database/books/add-three-books.sql",
-            "classpath:database/books/add-categories-for-books.sql"
+            ADD_CATEGORIES_SQL,
+            ADD_THREE_BOOKS_SQL,
+            ADD_CATEGORIES_FOR_BOOKS_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getAll_GetTwoExistingBooks_ReturnsExpectedBooks() throws Exception {
         // Given
-        List<BookDto> expected = List.of(getOrwell(EXISTING_TITLE), getMelville());
+        List<BookDto> expected = List.of(getOrwell(TITLE), getMelville());
 
         // When
         MvcResult result = mockMvc.perform(get(URI)
@@ -196,13 +197,13 @@ class BookControllerIntegrationTest {
     @DisplayName("Search books by params")
     @WithMockUser
     @Sql(scripts = {
-            "classpath:database/books/add-categories.sql",
-            "classpath:database/books/add-three-books.sql",
-            "classpath:database/books/add-categories-for-books.sql"
+            ADD_CATEGORIES_SQL,
+            ADD_THREE_BOOKS_SQL,
+            ADD_CATEGORIES_FOR_BOOKS_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void searchBooks_SearchExistingBooksByParams_ReturnsExpectedBooks() throws Exception {
         // Given
-        List<BookDto> expected = List.of(getOrwell(EXISTING_TITLE), getMelville());
+        List<BookDto> expected = List.of(getOrwell(TITLE), getMelville());
 
         // When
         MvcResult result = mockMvc.perform(get(URI + "/search")
@@ -228,36 +229,18 @@ class BookControllerIntegrationTest {
     @DisplayName("Delete existing book")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
     @Sql(scripts = {
-            "classpath:database/books/add-categories.sql",
-            "classpath:database/books/add-three-books.sql",
-            "classpath:database/books/add-categories-for-books.sql"
+            ADD_CATEGORIES_SQL,
+            ADD_THREE_BOOKS_SQL,
+            ADD_CATEGORIES_FOR_BOOKS_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void deleteBook_DeleteExisingBook_SuccessfullyDeleted() throws Exception {
         // Given
-        String url = URI + "/" + EXISTING_ID;
+        String url = URI + "/" + ID;
 
         // When
         mockMvc.perform(delete(url)
                        .contentType(MediaType.APPLICATION_JSON))
                .andExpect(status().isNoContent())
                .andReturn();
-    }
-
-    private static CreateBookRequestDto getRequestDto(String title) {
-        return CreateBookRequestDto.builder().title(title).author(EXISTING_AUTHOR)
-                                   .isbn(EXISTING_ISBN).categoryIds(EXISTING_CATEGORY_IDS)
-                                   .price(BigDecimal.valueOf(PRICE)).build();
-    }
-
-    private static BookDto getOrwell(String title) {
-        return BookDto.builder().id(EXISTING_ID).title(title).author(EXISTING_AUTHOR)
-                      .isbn(EXISTING_ISBN).categoryIds(EXISTING_CATEGORY_IDS)
-                      .price(BigDecimal.valueOf(PRICE)).build();
-    }
-
-    private static BookDto getMelville() {
-        return BookDto.builder().id(2L).title("Moby-Dick").author("Herman Melville")
-                      .categoryIds(Set.of(1L, 3L)).isbn("9781503280781")
-                      .price(BigDecimal.valueOf(14.99)).build();
     }
 }

@@ -10,12 +10,19 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static ua.bookstore.online.utils.ConstantAndMethod.AUTHOR;
+import static ua.bookstore.online.utils.ConstantAndMethod.CATEGORY_IDS;
+import static ua.bookstore.online.utils.ConstantAndMethod.ISBN;
+import static ua.bookstore.online.utils.ConstantAndMethod.PRICE;
+import static ua.bookstore.online.utils.ConstantAndMethod.TITLE;
+import static ua.bookstore.online.utils.ConstantAndMethod.createBook;
+import static ua.bookstore.online.utils.ConstantAndMethod.createBookRequestDto;
+import static ua.bookstore.online.utils.ConstantAndMethod.getBookDto;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +41,6 @@ import ua.bookstore.online.exception.EntityNotFoundException;
 import ua.bookstore.online.exception.UniqueIsbnException;
 import ua.bookstore.online.mapper.BookMapper;
 import ua.bookstore.online.model.Book;
-import ua.bookstore.online.model.Category;
 import ua.bookstore.online.repository.book.BookRepository;
 import ua.bookstore.online.repository.book.BookSpecificationBuilder;
 import ua.bookstore.online.service.CategoryService;
@@ -42,11 +48,6 @@ import ua.bookstore.online.service.CategoryService;
 @ExtendWith(MockitoExtension.class)
 class BookServiceImplTest {
     private static final Long ID = 15L;
-    private static final String ISBN = "123-456-789";
-    private static final String AUTHOR = "author";
-    private static final String TITLE = "title";
-    private static final BigDecimal PRICE = BigDecimal.valueOf(9.99);
-    private static final Set<Long> CATEGORY_IDS = Set.of(1L, 2L);
     @InjectMocks
     private BookServiceImpl bookService;
     @Mock
@@ -395,44 +396,5 @@ class BookServiceImplTest {
     private void verifyMapperMethods() {
         verify(bookMapper).toModel(any(CreateBookRequestDto.class));
         verify(bookMapper).toDto(any(Book.class));
-    }
-
-    private Set<Category> getCategories() {
-        return CATEGORY_IDS.stream()
-                           .map(Category::new)
-                           .collect(Collectors.toSet());
-    }
-
-    private CreateBookRequestDto createBookRequestDto() {
-        return CreateBookRequestDto.builder()
-                                   .title(TITLE)
-                                   .categoryIds(CATEGORY_IDS)
-                                   .author(AUTHOR)
-                                   .isbn(ISBN)
-                                   .price(PRICE)
-                                   .build();
-    }
-
-    private Book createBook() {
-        Book book = new Book();
-        book.setIsbn(ISBN);
-        book.setAuthor(AUTHOR);
-        book.setTitle(TITLE);
-        book.setPrice(PRICE);
-        book.setCategories(getCategories());
-        return book;
-    }
-
-    private BookDto getBookDto(Book book) {
-        return BookDto.builder()
-                      .categoryIds(
-                              book.getCategories().stream()
-                                  .map(Category::getId)
-                                  .collect(Collectors.toSet()))
-                      .title(book.getTitle())
-                      .author(book.getAuthor())
-                      .isbn(book.getIsbn())
-                      .price(book.getPrice())
-                      .build();
     }
 }

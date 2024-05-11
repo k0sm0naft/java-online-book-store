@@ -17,7 +17,8 @@ services:
 
   app:
     depends_on:
-      - mysqldb
+      mysqldb:
+        condition: service_healthy
     restart: on-failure
     image: book-nook
     build: .

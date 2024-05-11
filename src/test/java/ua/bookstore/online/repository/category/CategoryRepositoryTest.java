@@ -2,6 +2,8 @@ package ua.bookstore.online.repository.category;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static ua.bookstore.online.utils.ConstantAndMethod.TEAR_DOWN_DB_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.ADD_THREE_CATEGORIES_SQL;
 
 import java.sql.Connection;
 import java.util.List;
@@ -41,14 +43,14 @@ public class CategoryRepositoryTest {
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource("database/tear-down-db.sql"));
+                    new ClassPathResource(TEAR_DOWN_DB_SQL));
         }
     }
 
     @Test
     @DisplayName("Find all categories by IDs")
     @Sql(scripts = {
-            "classpath:database/categories/add-three-categories.sql"
+            ADD_THREE_CATEGORIES_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void findAllByIdIn_ReturnsCategoriesForGivenIds() {
         // Given
@@ -69,7 +71,7 @@ public class CategoryRepositoryTest {
     @Test
     @DisplayName("Find all categories by IDs when some IDs are invalid")
     @Sql(scripts = {
-            "classpath:database/categories/add-three-categories.sql"
+            ADD_THREE_CATEGORIES_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void findAllByIdIn_WithInvalidIds_ReturnsValidCategories() {
         // Given
