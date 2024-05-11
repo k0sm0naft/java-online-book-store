@@ -3,6 +3,14 @@ package ua.bookstore.online.repository.book;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_FOR_BOOKS_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.ADD_THREE_BOOKS_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.ID;
+import static ua.bookstore.online.utils.ConstantAndMethod.ISBN;
+import static ua.bookstore.online.utils.ConstantAndMethod.NON_EXISTING_ID;
+import static ua.bookstore.online.utils.ConstantAndMethod.NON_EXISTING_ISBN;
+import static ua.bookstore.online.utils.ConstantAndMethod.TEAR_DOWN_DB_SQL;
 
 import java.sql.Connection;
 import java.util.List;
@@ -27,11 +35,6 @@ import ua.bookstore.online.model.Book;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class BookRepositoryTest {
-    private static final String EXISTING_ISBN = "9780451524935";
-    private static final String NON_EXISTING_ISBN = "1234";
-    private static final Long NON_EXISTING_ID = 1234L;
-    private static final Long EXISTING_ID = 1L;
-
     @Autowired
     private BookRepository bookRepository;
 
@@ -45,19 +48,19 @@ public class BookRepositoryTest {
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource("database/tear-down-db.sql"));
+                    new ClassPathResource(TEAR_DOWN_DB_SQL));
         }
     }
 
     @Test
     @DisplayName("Return optional of book by ISBN")
     @Sql(scripts = {
-            "classpath:database/books/add-three-books.sql"
+            ADD_THREE_BOOKS_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void findByIsbn_FindingExistingAndNonExistingBookByIsbn_ReturnsOptionalOfBook() {
         // When
         Optional<Book> actualEmpty = bookRepository.findByIsbn(NON_EXISTING_ISBN);
-        Optional<Book> actualExisted = bookRepository.findByIsbn(EXISTING_ISBN);
+        Optional<Book> actualExisted = bookRepository.findByIsbn(ISBN);
 
         // Then
         assertTrue(actualEmpty.isEmpty(), "Optional of book by non-existing ISBN should be empty");
@@ -68,14 +71,14 @@ public class BookRepositoryTest {
     @Test
     @DisplayName("Return optional of book by ID with set of categories")
     @Sql(scripts = {
-            "classpath:database/books/add-three-books.sql",
-            "classpath:database/books/add-categories.sql",
-            "classpath:database/books/add-categories-for-books.sql"
+            ADD_THREE_BOOKS_SQL,
+            ADD_CATEGORIES_SQL,
+            ADD_CATEGORIES_FOR_BOOKS_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void findByIdWithCategories_FindingExistingAndNonExistingBookById_ReturnsOptionalOfBook() {
         // When
         Optional<Book> actualEmpty = bookRepository.findByIdWithCategories(NON_EXISTING_ID);
-        Optional<Book> actualExisted = bookRepository.findByIdWithCategories(EXISTING_ID);
+        Optional<Book> actualExisted = bookRepository.findByIdWithCategories(ID);
 
         // Then
         assertTrue(actualEmpty.isEmpty(), "Optional of book by non-existing ID should be empty");
@@ -86,9 +89,9 @@ public class BookRepositoryTest {
     @Test
     @DisplayName("Get all from DB with categories by params")
     @Sql(scripts = {
-            "classpath:database/books/add-three-books.sql",
-            "classpath:database/books/add-categories.sql",
-            "classpath:database/books/add-categories-for-books.sql"
+            ADD_THREE_BOOKS_SQL,
+            ADD_CATEGORIES_SQL,
+            ADD_CATEGORIES_FOR_BOOKS_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void findAllByParams_GetAllBooks_ReturnsAllBooks() {
         // Given
@@ -102,16 +105,16 @@ public class BookRepositoryTest {
         int expectedSize = 3;
         assertEquals(expectedSize, actual.getSize());
         actual.stream()
-                .map(Book::getCategories)
-                .forEach(Assertions::assertNotNull);
+              .map(Book::getCategories)
+              .forEach(Assertions::assertNotNull);
     }
 
     @Test
     @DisplayName("Get all from DB with categories")
     @Sql(scripts = {
-            "classpath:database/books/add-three-books.sql",
-            "classpath:database/books/add-categories.sql",
-            "classpath:database/books/add-categories-for-books.sql"
+            ADD_THREE_BOOKS_SQL,
+            ADD_CATEGORIES_SQL,
+            ADD_CATEGORIES_FOR_BOOKS_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void findAllBooks_GetAllBooks_ReturnsAllBooks() {
         // Given
@@ -124,25 +127,24 @@ public class BookRepositoryTest {
         int expectedSize = 3;
         assertEquals(expectedSize, actual.size());
         actual.stream()
-                .map(Book::getCategories)
-                .forEach(Assertions::assertNotNull);
+              .map(Book::getCategories)
+              .forEach(Assertions::assertNotNull);
     }
 
     @Test
     @DisplayName("Get all books with belongs to category ID")
     @Sql(scripts = {
-            "classpath:database/books/add-three-books.sql",
-            "classpath:database/books/add-categories.sql",
-            "classpath:database/books/add-categories-for-books.sql"
+            ADD_THREE_BOOKS_SQL,
+            ADD_CATEGORIES_SQL,
+            ADD_CATEGORIES_FOR_BOOKS_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void findAllByCategoryId_GetAllBooksByCategoryId_ReturnsAllBooksByCategoryId() {
         // Given
         Pageable pageable = Pageable.unpaged();
-        Long fictionId = EXISTING_ID;
         Long classicId = 3L;
 
         // When
-        List<Book> actualFiction = bookRepository.findAllByCategories_Id(fictionId, pageable);
+        List<Book> actualFiction = bookRepository.findAllByCategories_Id(ID, pageable);
         List<Book> actualClassic = bookRepository.findAllByCategories_Id(classicId, pageable);
 
         // Then
@@ -150,24 +152,24 @@ public class BookRepositoryTest {
         assertNotNull(actualClassic);
         int expectedSizeFiction = 2;
         int expectedSizeClassic = 1;
-        assertEquals(expectedSizeFiction, actualFiction.size());
-        assertEquals(expectedSizeClassic, actualClassic.size());
+        assertEquals(expectedSizeFiction, actualFiction.size(), "Size should be equals");
+        assertEquals(expectedSizeClassic, actualClassic.size(), "Size should be equals");
     }
 
     @Test
     @DisplayName("Get all books by ID and ISBN")
     @Sql(scripts = {
-            "classpath:database/books/add-three-books.sql"
+            ADD_THREE_BOOKS_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void findAllByIdOrIsbn_GetAllBooksByIdAndIsbn_ReturnsAllBooksByIDAndIsbn() {
         // Given
         Long secondExistId = 2L;
 
         // When
-        List<Book> actualTwo = bookRepository.findAllByIdOrIsbn(secondExistId, EXISTING_ISBN);
-        List<Book> actualOne1 = bookRepository.findAllByIdOrIsbn(EXISTING_ID, EXISTING_ISBN);
-        List<Book> actualOne2 = bookRepository.findAllByIdOrIsbn(NON_EXISTING_ID, EXISTING_ISBN);
-        List<Book> actualOne3 = bookRepository.findAllByIdOrIsbn(EXISTING_ID, NON_EXISTING_ISBN);
+        List<Book> actualTwo = bookRepository.findAllByIdOrIsbn(secondExistId, ISBN);
+        List<Book> actualOne1 = bookRepository.findAllByIdOrIsbn(ID, ISBN);
+        List<Book> actualOne2 = bookRepository.findAllByIdOrIsbn(NON_EXISTING_ID, ISBN);
+        List<Book> actualOne3 = bookRepository.findAllByIdOrIsbn(ID, NON_EXISTING_ISBN);
         List<Book> actualZero =
                 bookRepository.findAllByIdOrIsbn(NON_EXISTING_ID, NON_EXISTING_ISBN);
 

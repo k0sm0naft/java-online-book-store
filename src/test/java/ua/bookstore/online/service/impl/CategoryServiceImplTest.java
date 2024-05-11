@@ -253,10 +253,10 @@ class CategoryServiceImplTest {
         Set<Long> emptyCategoryIds = Collections.emptySet();
 
         // When
-        Set<Long> result = categoryService.getAllExistedCategoryIdsFromIds(emptyCategoryIds);
+        Set<Long> actual = categoryService.getAllExistedCategoryIdsFromIds(emptyCategoryIds);
 
         // Then
-        assertTrue(result.isEmpty());
+        assertTrue(actual.isEmpty(), "Should be empty but was not");
 
         // Verify method calls
         verify(categoryRepository).findAllByIdIn(emptyCategoryIds);

@@ -9,6 +9,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_FOR_BOOKS_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.ADD_THREE_BOOKS_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.ID;
+import static ua.bookstore.online.utils.ConstantAndMethod.TEAR_DOWN_DB_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.ADD_THREE_CATEGORIES_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.getAdventure;
+import static ua.bookstore.online.utils.ConstantAndMethod.getClassic;
+import static ua.bookstore.online.utils.ConstantAndMethod.getFiction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
@@ -39,7 +48,6 @@ import ua.bookstore.online.dto.category.CategoryResponseDto;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CategoryControllerIntegrationTest {
-    private static final Long EXISTING_ID = 1L;
     private static final String URI = "/categories";
     private static MockMvc mockMvc;
     @Autowired
@@ -65,7 +73,7 @@ class CategoryControllerIntegrationTest {
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource("database/tear-down-db.sql"));
+                    new ClassPathResource(TEAR_DOWN_DB_SQL));
         }
     }
 
@@ -101,21 +109,23 @@ class CategoryControllerIntegrationTest {
     @DisplayName("Update existing category")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
     @Sql(scripts = {
-            "classpath:database/categories/add-three-categories.sql"
+            ADD_THREE_CATEGORIES_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void updateCategory_UpdateExistingCategory_ReturnsExpectedCategory() throws Exception {
         // Given
+        String updatedName = "updatedName";
+        String updatedDescription = "updatedDescription";
         CategoryRequestDto requestDto = CategoryRequestDto.builder()
-                                                          .name("updatedName")
-                                                          .description("updatedDescription")
+                                                          .name(updatedName)
+                                                          .description(updatedDescription)
                                                           .build();
         CategoryResponseDto expected = CategoryResponseDto.builder()
-                                                          .id(EXISTING_ID)
-                                                          .name("updatedName")
-                                                          .description("updatedDescription")
+                                                          .id(ID)
+                                                          .name(updatedName)
+                                                          .description(updatedDescription)
                                                           .build();
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
-        String url = URI + "/" + EXISTING_ID;
+        String url = URI + "/" + ID;
 
         // When
         MvcResult result = mockMvc.perform(put(url)
@@ -136,7 +146,7 @@ class CategoryControllerIntegrationTest {
     @DisplayName("Get two existing category")
     @WithMockUser
     @Sql(scripts = {
-            "classpath:database/categories/add-three-categories.sql"
+            ADD_THREE_CATEGORIES_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getAll_GetTwoExistingCategories_ReturnsExpectedCategories() throws Exception {
         // Given
@@ -164,11 +174,11 @@ class CategoryControllerIntegrationTest {
     @DisplayName("Get existing category by ID")
     @WithMockUser
     @Sql(scripts = {
-            "classpath:database/categories/add-three-categories.sql"
+            ADD_THREE_CATEGORIES_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getCategoryById_GetExistingCategory_ReturnsExpectedCategory() throws Exception {
         // Given
-        String url = URI + "/" + EXISTING_ID;
+        String url = URI + "/" + ID;
         CategoryResponseDto expected = getFiction();
 
         // When
@@ -189,9 +199,9 @@ class CategoryControllerIntegrationTest {
     @DisplayName("Get all books from existing category by ID")
     @WithMockUser
     @Sql(scripts = {
-            "classpath:database/books/add-categories.sql",
-            "classpath:database/books/add-three-books.sql",
-            "classpath:database/books/add-categories-for-books.sql"
+            ADD_CATEGORIES_SQL,
+            ADD_THREE_BOOKS_SQL,
+            ADD_CATEGORIES_FOR_BOOKS_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getBooksByCategoryId_GetAllBooksByCategory_ReturnsExpectedBooks() throws Exception {
         // Given
@@ -200,7 +210,7 @@ class CategoryControllerIntegrationTest {
                        .isbn("9780451524935").price(BigDecimal.valueOf(12.99)).build(),
                 BookDto.builder().id(2L).title("Moby-Dick").author("Herman Melville")
                        .isbn("9781503280781").price(BigDecimal.valueOf(14.99)).build());
-        String url = URI + "/" + EXISTING_ID + "/books";
+        String url = URI + "/" + ID + "/books";
 
         // When
         MvcResult result = mockMvc.perform(get(url)
@@ -220,41 +230,16 @@ class CategoryControllerIntegrationTest {
     @DisplayName("Delete existing category")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
     @Sql(scripts = {
-            "classpath:database/categories/add-three-categories.sql"
+            ADD_THREE_CATEGORIES_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void deleteCategory_DeleteExistingCategory_SuccessfullyDeleted() throws Exception {
         // Given
-        String url = URI + "/" + EXISTING_ID;
+        String url = URI + "/" + ID;
 
         // When
         mockMvc.perform(delete(url)
                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andReturn();
-
-    }
-
-    private static CategoryResponseDto getFiction() {
-        return CategoryResponseDto.builder()
-                                  .id(1L)
-                                  .name("Fiction")
-                                  .description("Fiction description")
-                                  .build();
-    }
-
-    private static CategoryResponseDto getAdventure() {
-        return CategoryResponseDto.builder()
-                                  .id(2L)
-                                  .name("Adventure")
-                                  .description("Adventure description")
-                                  .build();
-    }
-
-    private static CategoryResponseDto getClassic() {
-        return CategoryResponseDto.builder()
-                                  .id(3L)
-                                  .name("Classic")
-                                  .description("Classic description")
-                                  .build();
     }
 }
