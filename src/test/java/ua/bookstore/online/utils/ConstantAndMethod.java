@@ -15,8 +15,7 @@ import ua.bookstore.online.dto.category.CategoryRequestDto;
 import ua.bookstore.online.dto.category.CategoryResponseDto;
 import ua.bookstore.online.model.Book;
 import ua.bookstore.online.model.Category;
-import ua.bookstore.online.model.ShoppingCart;
-import ua.bookstore.online.model.User;
+
 
 public class ConstantAndMethod {
     public static final Long ID_1 = 1L;
@@ -38,12 +37,6 @@ public class ConstantAndMethod {
     public static final String CLASSPATH_ADD_THREE_CATEGORIES_SQL =
             CLASSPATH + ADD_THREE_CATEGORIES_SQL;
     public static final String TEAR_DOWN_DB_SQL = "database/tear-down-db.sql";
-    public static final String ADD_CART_ITEMS_SQL =
-            "database/shopping.carts/items/add-cart_items.sql";
-    public static final String ADD_THREE_SHOPPING_CARTS_SQL =
-            "database/shopping.carts/add-three-shopping_carts.sql";
-    public static final String ADD_USERS_FOR_SHOPPING_CARTS_SQL =
-            "database/shopping.carts/add-users-for-shopping_carts.sql";
     public static final String FICTION = "Fiction";
     public static final String FICTION_DESCRIPTION = "Fiction description";
     public static final long ID_3 = 3L;
@@ -54,22 +47,6 @@ public class ConstantAndMethod {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(connection,
                     new ClassPathResource(TEAR_DOWN_DB_SQL));
-        }
-    }
-
-    @SneakyThrows
-    public static void beforeEachShoppingCartRepositoryTest(@Autowired DataSource dataSource) {
-        tearDown(dataSource);
-        try (Connection connection = dataSource.getConnection()) {
-            connection.setAutoCommit(true);
-            ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource(ADD_USERS_FOR_SHOPPING_CARTS_SQL));
-            ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource(ADD_THREE_SHOPPING_CARTS_SQL));
-            ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource(ADD_THREE_BOOKS_SQL));
-            ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource(ADD_CART_ITEMS_SQL));
         }
     }
 
@@ -189,23 +166,5 @@ public class ConstantAndMethod {
                                   .name("Classic")
                                   .description("Classic description")
                                   .build();
-    }
-
-    public static User getUser(Long id) {
-        User user = new User();
-        user.setId(id);
-        return user;
-    }
-
-    public static ShoppingCart getShoppingCart() {
-        ShoppingCart shoppingCart = new ShoppingCart(getUser(ID_1));
-        shoppingCart.setId(ID_1);
-        return shoppingCart;
-    }
-
-    public static Book getBook(Long id) {
-        Book book = new Book();
-        book.setId(id);
-        return book;
     }
 }
