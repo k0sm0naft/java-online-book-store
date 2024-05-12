@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static ua.bookstore.online.utils.ConstantAndMethod.AUTHOR;
 import static ua.bookstore.online.utils.ConstantAndMethod.CATEGORY_IDS;
+import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
 import static ua.bookstore.online.utils.ConstantAndMethod.ISBN;
 import static ua.bookstore.online.utils.ConstantAndMethod.PRICE;
 import static ua.bookstore.online.utils.ConstantAndMethod.TITLE;
@@ -47,7 +48,6 @@ import ua.bookstore.online.service.CategoryService;
 
 @ExtendWith(MockitoExtension.class)
 class BookServiceImplTest {
-    private static final Long ID = 15L;
     @InjectMocks
     private BookServiceImpl bookService;
     @Mock
@@ -155,22 +155,23 @@ class BookServiceImplTest {
     void getById_ExistingId_ReturnsBookDto() {
         // Given
         Book bookFromRepository = createBook();
-        bookFromRepository.setId(ID);
+        bookFromRepository.setId(ID_1);
 
         // Mocking behavior
-        when(bookRepository.findByIdWithCategories(ID)).thenReturn(Optional.of(bookFromRepository));
+        when(bookRepository.findByIdWithCategories(ID_1)).thenReturn(
+                Optional.of(bookFromRepository));
         when(bookMapper.toDto(bookFromRepository)).thenReturn(
                 getBookDto(bookFromRepository));
 
         // When
-        BookDto result = bookService.getById(ID);
+        BookDto result = bookService.getById(ID_1);
 
         // Then
         BookDto expected = getBookDto(bookFromRepository);
         assertTrue(EqualsBuilder.reflectionEquals(expected, result));
 
         // Verify method calls
-        verify(bookRepository).findByIdWithCategories(ID);
+        verify(bookRepository).findByIdWithCategories(ID_1);
         verify(bookMapper).toDto(bookFromRepository);
         verifyNoMoreInteractions(bookRepository, bookMapper);
     }
@@ -179,14 +180,14 @@ class BookServiceImplTest {
     @DisplayName("Get non-existing book from DB throws exception")
     void getById_NonExistingId_ThrowsException() {
         // Mocking behavior for repository
-        when(bookRepository.findByIdWithCategories(ID)).thenReturn(Optional.empty());
+        when(bookRepository.findByIdWithCategories(ID_1)).thenReturn(Optional.empty());
 
         // When
         Exception actual =
-                assertThrows(EntityNotFoundException.class, () -> bookService.getById(ID));
+                assertThrows(EntityNotFoundException.class, () -> bookService.getById(ID_1));
 
         // Then
-        assertEquals("Book not found by id " + ID, actual.getMessage());
+        assertEquals("Book not found by id " + ID_1, actual.getMessage());
 
         // Verify method calls
         verifyNoMoreInteractions(bookRepository, bookMapper);
@@ -225,7 +226,7 @@ class BookServiceImplTest {
     void update_ExistingBook_ReturnsBookDto() {
         // Given
         Book existingBook = createBook();
-        existingBook.setId(ID);
+        existingBook.setId(ID_1);
         existingBook.setPrice(BigDecimal.TEN);
 
         // Mocking behavior
@@ -234,13 +235,13 @@ class BookServiceImplTest {
         mockingMapperMethods(existingBook);
 
         // When
-        BookDto actual = bookService.update(ID, createBookRequestDto());
+        BookDto actual = bookService.update(ID_1, createBookRequestDto());
 
         // Then
         assertTrue(EqualsBuilder.reflectionEquals(getBookDto(existingBook), actual));
 
         // Verify repository method calls
-        verify(bookRepository).findAllByIdOrIsbn(ID, ISBN);
+        verify(bookRepository).findAllByIdOrIsbn(ID_1, ISBN);
         verifySaveMethods();
         verifyMapperMethods();
         verifyNoMoreInteractions(bookRepository, categoryService, bookMapper);
@@ -253,14 +254,14 @@ class BookServiceImplTest {
         CreateBookRequestDto requestDto = createBookRequestDto();
 
         // Mocking behavior
-        when(bookRepository.findAllByIdOrIsbn(ID, ISBN)).thenReturn(List.of());
+        when(bookRepository.findAllByIdOrIsbn(ID_1, ISBN)).thenReturn(List.of());
 
         // When
         Exception actual = assertThrows(EntityNotFoundException.class,
-                () -> bookService.update(ID, requestDto));
+                () -> bookService.update(ID_1, requestDto));
 
         // Then
-        assertEquals("Can't find book to update by id " + ID, actual.getMessage());
+        assertEquals("Can't find book to update by id " + ID_1, actual.getMessage());
 
         // Verify method calls
         verifyNoMoreInteractions(bookRepository, categoryService, bookMapper);
@@ -272,16 +273,16 @@ class BookServiceImplTest {
         // Given
         CreateBookRequestDto requestDto = createBookRequestDto();
         Book existingBook = createBook();
-        existingBook.setId(ID);
+        existingBook.setId(ID_1);
         Book bookWithSameIsbn = createBook();
 
         // Mocking behavior
-        when(bookRepository.findAllByIdOrIsbn(ID, ISBN)).thenReturn(
+        when(bookRepository.findAllByIdOrIsbn(ID_1, ISBN)).thenReturn(
                 List.of(existingBook, bookWithSameIsbn));
 
         // When
         Exception actual = assertThrows(UniqueIsbnException.class,
-                () -> bookService.update(ID, requestDto));
+                () -> bookService.update(ID_1, requestDto));
 
         // Then
         assertEquals("Book with ISBN " + ISBN + " already exist", actual.getMessage());
@@ -296,7 +297,7 @@ class BookServiceImplTest {
         // Given
         CreateBookRequestDto requestDto = createBookRequestDto();
         Book existingBook = createBook();
-        existingBook.setId(ID);
+        existingBook.setId(ID_1);
         Set<Long> existedCategoriesIds = Set.of();
 
         // Mocking behavior
@@ -305,7 +306,7 @@ class BookServiceImplTest {
         // When
         Exception actual =
                 assertThrows(EntityNotFoundException.class,
-                        () -> bookService.update(ID, requestDto));
+                        () -> bookService.update(ID_1, requestDto));
 
         // Then
         assertEquals("Can't find categories with ids: " + CATEGORY_IDS, actual.getMessage());
@@ -318,14 +319,14 @@ class BookServiceImplTest {
     @DisplayName("Delete existing book returns void")
     void delete_ExistingBook_SuccessfullyDeleted() {
         // Mocking behavior
-        when(bookRepository.findById(ID)).thenReturn(Optional.of(new Book()));
+        when(bookRepository.findById(ID_1)).thenReturn(Optional.of(new Book()));
 
         // When
-        assertDoesNotThrow(() -> bookService.delete(ID));
+        assertDoesNotThrow(() -> bookService.delete(ID_1));
 
         // Verify method calls
-        verify(bookRepository).findById(ID);
-        verify(bookRepository).deleteById(ID);
+        verify(bookRepository).findById(ID_1);
+        verify(bookRepository).deleteById(ID_1);
         verifyNoMoreInteractions(bookRepository);
     }
 
@@ -333,14 +334,14 @@ class BookServiceImplTest {
     @DisplayName("Delete non-existing book throws exception")
     void delete_NonExistingBook_ThrowsException() {
         // Mocking behavior
-        when(bookRepository.findById(ID)).thenReturn(Optional.empty());
+        when(bookRepository.findById(ID_1)).thenReturn(Optional.empty());
 
         // When
         Exception exception = assertThrows(EntityNotFoundException.class,
-                () -> bookService.delete(ID));
+                () -> bookService.delete(ID_1));
 
         // Then
-        assertEquals("Can't find book to delete by id " + ID, exception.getMessage());
+        assertEquals("Can't find book to delete by id " + ID_1, exception.getMessage());
 
         // Verify method calls
         verifyNoMoreInteractions(bookRepository);
@@ -354,18 +355,18 @@ class BookServiceImplTest {
         List<Book> booksFromRepository = List.of(createBook(), createBook());
 
         // Mocking behavior
-        when(bookRepository.findAllByCategories_Id(ID, pageable)).thenReturn(booksFromRepository);
+        when(bookRepository.findAllByCategories_Id(ID_1, pageable)).thenReturn(booksFromRepository);
         when(bookMapper.toDtoWithoutCategories(any(Book.class))).thenReturn(
-                new BookDtoWithoutCategoryIds(ID, TITLE, AUTHOR, ISBN, PRICE, null, null));
+                new BookDtoWithoutCategoryIds(ID_1, TITLE, AUTHOR, ISBN, PRICE, null, null));
 
         // When
-        List<BookDtoWithoutCategoryIds> result = bookService.getByCategoryId(ID, pageable);
+        List<BookDtoWithoutCategoryIds> result = bookService.getByCategoryId(ID_1, pageable);
 
         // Then
         assertEquals(booksFromRepository.size(), result.size());
 
         // Verify method calls
-        verify(bookRepository).findAllByCategories_Id(ID, pageable);
+        verify(bookRepository).findAllByCategories_Id(ID_1, pageable);
         verify(bookMapper, times(booksFromRepository.size())).toDtoWithoutCategories(
                 any(Book.class));
         verifyNoMoreInteractions(bookRepository, bookMapper);
@@ -377,7 +378,7 @@ class BookServiceImplTest {
     }
 
     private void mockingForUpdateMethod(Book existingBook, Set<Long> categoryIds) {
-        when(bookRepository.findAllByIdOrIsbn(ID, ISBN)).thenReturn(List.of(existingBook));
+        when(bookRepository.findAllByIdOrIsbn(ID_1, ISBN)).thenReturn(List.of(existingBook));
         when(categoryService.getAllExistedCategoryIdsFromIds(CATEGORY_IDS)).thenReturn(
                 categoryIds);
     }
