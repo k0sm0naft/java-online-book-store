@@ -12,30 +12,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_FOR_BOOKS_SQL;
 import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_SQL;
 import static ua.bookstore.online.utils.ConstantAndMethod.ADD_THREE_BOOKS_SQL;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID;
-import static ua.bookstore.online.utils.ConstantAndMethod.TEAR_DOWN_DB_SQL;
-import static ua.bookstore.online.utils.ConstantAndMethod.TITLE;
+import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
+import static ua.bookstore.online.utils.ConstantAndMethod.ISBN;
+import static ua.bookstore.online.utils.ConstantAndMethod.createBookRequestDto;
 import static ua.bookstore.online.utils.ConstantAndMethod.getMelville;
+import static ua.bookstore.online.utils.ConstantAndMethod.getNewOrwell;
 import static ua.bookstore.online.utils.ConstantAndMethod.getOrwell;
 import static ua.bookstore.online.utils.ConstantAndMethod.getRequestDto;
+import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import javax.sql.DataSource;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -52,72 +55,69 @@ class BookControllerIntegrationTest {
     private ObjectMapper objectMapper;
 
     @BeforeAll
-    static void beforeAll(@Autowired DataSource dataSource,
-            @Autowired WebApplicationContext applicationContext) {
+    static void beforeAll(@Autowired WebApplicationContext applicationContext) {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(applicationContext)
                 .apply(springSecurity())
                 .build();
-        teardown(dataSource);
+    }
+
+    @BeforeEach
+    void beforeEach(@Autowired DataSource dataSource) throws SQLException {
+        tearDown(dataSource);
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(true);
+            ScriptUtils.executeSqlScript(connection,
+                    new ClassPathResource(ADD_CATEGORIES_SQL));
+            ScriptUtils.executeSqlScript(connection,
+                    new ClassPathResource(ADD_THREE_BOOKS_SQL));
+            ScriptUtils.executeSqlScript(connection,
+                    new ClassPathResource(ADD_CATEGORIES_FOR_BOOKS_SQL));
+        }
     }
 
     @AfterEach
     void afterEach(@Autowired DataSource dataSource) {
-        teardown(dataSource);
-    }
-
-    @SneakyThrows
-    static void teardown(@Autowired DataSource dataSource) {
-        try (Connection connection = dataSource.getConnection()) {
-            connection.setAutoCommit(true);
-            ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource(TEAR_DOWN_DB_SQL));
-        }
+        tearDown(dataSource);
     }
 
     @Test
     @DisplayName("Create new book")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
-    @Sql(scripts = {
-            ADD_CATEGORIES_SQL
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void createBook_CreateNewBook_ReturnsExpectedBook() throws Exception {
         // Given
-        CreateBookRequestDto requestDto = getRequestDto(TITLE);
-        BookDto expected = getOrwell(TITLE);
+        CreateBookRequestDto requestDto = createBookRequestDto();
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         // When
         MvcResult result = mockMvc.perform(post(URI)
                                           .content(jsonRequest)
                                           .contentType(MediaType.APPLICATION_JSON))
-                                  .andExpect(status().isCreated())
+                                  .andExpect(status().isConflict())
                                   .andReturn();
 
         // Then
-        BookDto actual =
+        ProblemDetail actual =
                 objectMapper.readValue(result.getResponse().getContentAsString(),
-                        BookDto.class);
+                        ProblemDetail.class);
         assertNotNull(actual);
-        assertNotNull(actual.id());
-        assertTrue(EqualsBuilder.reflectionEquals(expected, actual, "id"));
+        assertEquals("Conflict", actual.getTitle());
+        assertNotNull(actual.getInstance());
+        assertEquals(URI, actual.getInstance().getPath());
+        assertNotNull(actual.getProperties());
+        assertEquals("Non uniq ISBN: " + ISBN, actual.getProperties().get("error"));
     }
 
     @Test
     @DisplayName("Update existing book")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
-    @Sql(scripts = {
-            ADD_CATEGORIES_SQL,
-            ADD_THREE_BOOKS_SQL,
-            ADD_CATEGORIES_FOR_BOOKS_SQL
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void updateBook_UpdateExisingBook_ReturnsExpectedBook() throws Exception {
         // Given
         String updatedTitle = "updatedTitle";
         CreateBookRequestDto requestDto = getRequestDto(updatedTitle);
-        BookDto expected = getOrwell(updatedTitle);
+        BookDto expected = getNewOrwell(updatedTitle);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
-        String url = URI + "/" + ID;
+        String url = URI + "/" + ID_1;
 
         // When
         MvcResult result = mockMvc.perform(put(url)
@@ -138,15 +138,10 @@ class BookControllerIntegrationTest {
     @Test
     @DisplayName("Get existing book by ID")
     @WithMockUser
-    @Sql(scripts = {
-            ADD_CATEGORIES_SQL,
-            ADD_THREE_BOOKS_SQL,
-            ADD_CATEGORIES_FOR_BOOKS_SQL
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getBookById_GetExistingBook_ReturnsExpectedBook() throws Exception {
         // Given
-        BookDto expected = getOrwell(TITLE);
-        String url = URI + "/" + ID;
+        BookDto expected = getOrwell();
+        String url = URI + "/" + ID_1;
 
         // When
         MvcResult result = mockMvc.perform(get(url)
@@ -166,14 +161,9 @@ class BookControllerIntegrationTest {
     @Test
     @DisplayName("Get two existing books")
     @WithMockUser
-    @Sql(scripts = {
-            ADD_CATEGORIES_SQL,
-            ADD_THREE_BOOKS_SQL,
-            ADD_CATEGORIES_FOR_BOOKS_SQL
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getAll_GetTwoExistingBooks_ReturnsExpectedBooks() throws Exception {
         // Given
-        List<BookDto> expected = List.of(getOrwell(TITLE), getMelville());
+        List<BookDto> expected = List.of(getOrwell(), getMelville());
 
         // When
         MvcResult result = mockMvc.perform(get(URI)
@@ -196,14 +186,9 @@ class BookControllerIntegrationTest {
     @Test
     @DisplayName("Search books by params")
     @WithMockUser
-    @Sql(scripts = {
-            ADD_CATEGORIES_SQL,
-            ADD_THREE_BOOKS_SQL,
-            ADD_CATEGORIES_FOR_BOOKS_SQL
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void searchBooks_SearchExistingBooksByParams_ReturnsExpectedBooks() throws Exception {
         // Given
-        List<BookDto> expected = List.of(getOrwell(TITLE), getMelville());
+        List<BookDto> expected = List.of(getOrwell(), getMelville());
 
         // When
         MvcResult result = mockMvc.perform(get(URI + "/search")
@@ -228,19 +213,14 @@ class BookControllerIntegrationTest {
     @Test
     @DisplayName("Delete existing book")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
-    @Sql(scripts = {
-            ADD_CATEGORIES_SQL,
-            ADD_THREE_BOOKS_SQL,
-            ADD_CATEGORIES_FOR_BOOKS_SQL
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void deleteBook_DeleteExisingBook_SuccessfullyDeleted() throws Exception {
         // Given
-        String url = URI + "/" + ID;
+        String url = URI + "/" + ID_1;
 
         // When
         mockMvc.perform(delete(url)
                        .contentType(MediaType.APPLICATION_JSON))
-               .andExpect(status().isNoContent())
-               .andReturn();
+                .andExpect(status().isNoContent())
+                .andReturn();
     }
 }
