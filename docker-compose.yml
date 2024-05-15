@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   mysqldb:
-    image: mysql
+    image: mysql:8
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
@@ -17,7 +17,8 @@ services:
 
   app:
     depends_on:
-      - mysqldb
+      mysqldb:
+        condition: service_healthy
     restart: on-failure
     image: book-nook
     build: .

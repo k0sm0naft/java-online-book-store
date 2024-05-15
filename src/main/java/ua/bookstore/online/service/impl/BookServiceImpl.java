@@ -52,11 +52,17 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public Book getBook(Long id) {
+        return bookRepository.findByIdWithCategories(id).orElseThrow(
+                () -> new EntityNotFoundException("Book not found by id " + id));
+    }
+
+    @Override
     public List<BookDto> getByParameters(
             BookSearchParameters bookSearchParameters, Pageable pageable) {
         Specification<Book> bookSpecification =
                 bookSpecificationBuilder.build(bookSearchParameters);
-        return bookRepository.findAllByParams(bookSpecification, pageable).stream()
+        return bookRepository.findAll(bookSpecification, pageable).stream()
                              .map(bookMapper::toDto)
                              .toList();
     }
@@ -82,9 +88,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookDtoWithoutCategoryIds> getByCategoryId(Long id, Pageable pageable) {
-        return bookRepository.findAllByCategoryId(id, pageable).stream()
-                .map(bookMapper::toDtoWithoutCategories)
-                .toList();
+        return bookRepository.findAllByCategories_Id(id, pageable).stream()
+                             .map(bookMapper::toDtoWithoutCategories)
+                             .toList();
     }
 
     private void validateIsbnUniqueness(Long id, CreateBookRequestDto bookRequestDto) {
@@ -94,7 +100,7 @@ public class BookServiceImpl implements BookService {
                     + bookRequestDto.isbn() + " already exist");
         }
 
-        if (!allByIdOrIsbn.getFirst().getId().equals(id)) {
+        if (allByIdOrIsbn.isEmpty() || !allByIdOrIsbn.getFirst().getId().equals(id)) {
             throw new EntityNotFoundException("Can't find book to update by id " + id);
         }
 
@@ -104,17 +110,11 @@ public class BookServiceImpl implements BookService {
     private void validateCategories(CreateBookRequestDto bookRequestDto) {
         Set<Long> categoryIds = bookRequestDto.categoryIds();
         Set<Long> categoryIdsFromDb = categoryService.getAllExistedCategoryIdsFromIds(categoryIds);
-        System.out.println(categoryIdsFromDb);
         if (categoryIdsFromDb.size() < categoryIds.size()) {
             List<Long> notExistedIds = categoryIds.stream()
                                                   .filter(id -> !categoryIdsFromDb.contains(id))
                                                   .toList();
             throw new EntityNotFoundException("Can't find categories with ids: " + notExistedIds);
         }
-    }
-
-    public Book getBook(Long id) {
-        return bookRepository.findByIdWithCategories(id).orElseThrow(
-                () -> new EntityNotFoundException("Book not found by id " + id));
     }
 }

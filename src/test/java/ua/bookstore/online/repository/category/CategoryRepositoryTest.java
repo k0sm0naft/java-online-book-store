@@ -1,0 +1,78 @@
+package ua.bookstore.online.repository.category;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static ua.bookstore.online.utils.ConstantAndMethod.CLASSPATH_ADD_THREE_CATEGORIES_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.sql.DataSource;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
+import ua.bookstore.online.model.Category;
+
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+public class CategoryRepositoryTest {
+    private static final long ID_1 = 1L;
+    private static final long ID_2 = 2L;
+    private static final long ID_3 = 3L;
+    private static final long ID_4 = 4L;
+    private static final long ID_5 = 5L;
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @BeforeAll
+    static void beforeAll(@Autowired DataSource dataSource) {
+        tearDown(dataSource);
+    }
+
+    @Test
+    @DisplayName("Find all categories by IDs")
+    @Sql(scripts = {
+            CLASSPATH_ADD_THREE_CATEGORIES_SQL
+    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void findAllByIdIn_ReturnsCategoriesForGivenIds() {
+        // Given
+        Set<Long> categoryIds = Set.of(ID_1, ID_2);
+        List<Long> expected = List.of(ID_1, ID_2);
+
+        // When
+        Set<Category> actual = categoryRepository.findAllByIdIn(categoryIds);
+
+        // Then
+        assertEquals(expected.size(), actual.size());
+        assertTrue(actual.stream()
+                         .map(Category::getId)
+                         .collect(Collectors.toSet())
+                         .containsAll(expected));
+    }
+
+    @Test
+    @DisplayName("Find all categories by IDs when some IDs are invalid")
+    @Sql(scripts = {
+            CLASSPATH_ADD_THREE_CATEGORIES_SQL
+    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void findAllByIdIn_WithInvalidIds_ReturnsValidCategories() {
+        // Given
+        Set<Long> categoryIds = Set.of(ID_1, ID_2, ID_3, ID_4, ID_5);
+        List<Long> expected = List.of(ID_1, ID_2, ID_3);
+
+        // When
+        Set<Category> actual = categoryRepository.findAllByIdIn(categoryIds);
+
+        // Then
+        assertEquals(expected.size(), actual.size());
+        assertTrue(actual.stream()
+                         .map(Category::getId)
+                         .collect(Collectors.toSet())
+                         .containsAll(expected));
+    }
+}
