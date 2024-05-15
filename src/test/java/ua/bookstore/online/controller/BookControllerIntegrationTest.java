@@ -13,7 +13,8 @@ import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_FOR_BOO
 import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_SQL;
 import static ua.bookstore.online.utils.ConstantAndMethod.ADD_THREE_BOOKS_SQL;
 import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ISBN;
+import static ua.bookstore.online.utils.ConstantAndMethod.ISBN_ORWELL;
+import static ua.bookstore.online.utils.ConstantAndMethod.NON_EXISTING_ISBN;
 import static ua.bookstore.online.utils.ConstantAndMethod.createBookRequestDto;
 import static ua.bookstore.online.utils.ConstantAndMethod.getMelville;
 import static ua.bookstore.online.utils.ConstantAndMethod.getNewOrwell;
@@ -67,10 +68,8 @@ class BookControllerIntegrationTest {
         tearDown(dataSource);
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(true);
-            ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource(ADD_CATEGORIES_SQL));
-            ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource(ADD_THREE_BOOKS_SQL));
+            ScriptUtils.executeSqlScript(connection, new ClassPathResource(ADD_CATEGORIES_SQL));
+            ScriptUtils.executeSqlScript(connection, new ClassPathResource(ADD_THREE_BOOKS_SQL));
             ScriptUtils.executeSqlScript(connection,
                     new ClassPathResource(ADD_CATEGORIES_FOR_BOOKS_SQL));
         }
@@ -85,6 +84,34 @@ class BookControllerIntegrationTest {
     @DisplayName("Create new book")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
     void createBook_CreateNewBook_ReturnsExpectedBook() throws Exception {
+        // Given
+        CreateBookRequestDto requestDto = createBookRequestDto();
+        String jsonRequest = objectMapper.writeValueAsString(requestDto);
+        jsonRequest = jsonRequest.replace(ISBN_ORWELL, NON_EXISTING_ISBN);
+
+        // When
+        MvcResult result = mockMvc.perform(post(URI)
+                                          .content(jsonRequest)
+                                          .contentType(MediaType.APPLICATION_JSON))
+                                  .andExpect(status().isCreated())
+                                  .andReturn();
+
+        // Then
+        BookDto actual =
+                objectMapper.readValue(result.getResponse().getContentAsString(),
+                        BookDto.class);
+        assertNotNull(actual);
+        assertTrue(EqualsBuilder
+                .reflectionEquals(getOrwell(), actual, "id", "isbn", "categoryIds"));
+        assertNotNull(actual.id());
+        assertEquals(NON_EXISTING_ISBN, actual.isbn());
+        assertTrue(requestDto.categoryIds().containsAll(actual.categoryIds()));
+    }
+
+    @Test
+    @DisplayName("Create new book with existing ISBN, returns problem detail")
+    @WithMockUser(username = "admin", roles = {"MANAGER"})
+    void createBook_CreateNewBookWithExistingIsbn_ReturnsProblemDetail() throws Exception {
         // Given
         CreateBookRequestDto requestDto = createBookRequestDto();
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
@@ -105,7 +132,7 @@ class BookControllerIntegrationTest {
         assertNotNull(actual.getInstance());
         assertEquals(URI, actual.getInstance().getPath());
         assertNotNull(actual.getProperties());
-        assertEquals("Non uniq ISBN: " + ISBN, actual.getProperties().get("error"));
+        assertEquals("Non uniq ISBN: " + ISBN_ORWELL, actual.getProperties().get("error"));
     }
 
     @Test

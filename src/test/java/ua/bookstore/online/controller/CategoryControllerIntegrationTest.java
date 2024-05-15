@@ -9,11 +9,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_THREE_CATEGORIES_SQL;
+import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_SQL;
 import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
 import static ua.bookstore.online.utils.ConstantAndMethod.beforeEachBookRepositoryTest;
-import static ua.bookstore.online.utils.ConstantAndMethod.getAdventure;
 import static ua.bookstore.online.utils.ConstantAndMethod.getClassic;
+import static ua.bookstore.online.utils.ConstantAndMethod.getDystopian;
 import static ua.bookstore.online.utils.ConstantAndMethod.getFiction;
 import static ua.bookstore.online.utils.ConstantAndMethod.getMelville;
 import static ua.bookstore.online.utils.ConstantAndMethod.getOrwell;
@@ -65,8 +65,7 @@ class CategoryControllerIntegrationTest {
         tearDown(dataSource);
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(true);
-            ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource(ADD_THREE_CATEGORIES_SQL));
+            ScriptUtils.executeSqlScript(connection, new ClassPathResource(ADD_CATEGORIES_SQL));
         }
     }
 
@@ -136,7 +135,7 @@ class CategoryControllerIntegrationTest {
     @WithMockUser
     void getAll_GetTwoExistingCategories_ReturnsExpectedCategories() throws Exception {
         // Given
-        List<CategoryResponseDto> expected = List.of(getFiction(), getAdventure());
+        List<CategoryResponseDto> expected = List.of(getFiction(), getDystopian());
 
         // When
         MvcResult result = mockMvc.perform(get(URI)

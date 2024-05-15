@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ISBN;
+import static ua.bookstore.online.utils.ConstantAndMethod.ISBN_ORWELL;
 import static ua.bookstore.online.utils.ConstantAndMethod.NON_EXISTING_ID;
 import static ua.bookstore.online.utils.ConstantAndMethod.NON_EXISTING_ISBN;
 import static ua.bookstore.online.utils.ConstantAndMethod.beforeEachBookRepositoryTest;
@@ -47,7 +47,7 @@ public class BookRepositoryTest {
     void findByIsbn_FindingExistingAndNonExistingBookByIsbn_ReturnsOptionalOfBook() {
         // When
         Optional<Book> actualEmpty = bookRepository.findByIsbn(NON_EXISTING_ISBN);
-        Optional<Book> actualExisted = bookRepository.findByIsbn(ISBN);
+        Optional<Book> actualExisted = bookRepository.findByIsbn(ISBN_ORWELL);
 
         // Then
         assertTrue(actualEmpty.isEmpty(), "Optional of book by non-existing ISBN should be empty");
@@ -99,8 +99,8 @@ public class BookRepositoryTest {
         int expectedSize = 3;
         assertEquals(expectedSize, actual.size());
         actual.stream()
-               .map(Book::getCategories)
-               .forEach(Assertions::assertNotNull);
+                .map(Book::getCategories)
+                .forEach(Assertions::assertNotNull);
     }
 
     @Test
@@ -130,9 +130,9 @@ public class BookRepositoryTest {
         Long secondExistId = 2L;
 
         // When
-        List<Book> actualTwo = bookRepository.findAllByIdOrIsbn(secondExistId, ISBN);
-        List<Book> actualOne1 = bookRepository.findAllByIdOrIsbn(ID_1, ISBN);
-        List<Book> actualOne2 = bookRepository.findAllByIdOrIsbn(NON_EXISTING_ID, ISBN);
+        List<Book> actualTwo = bookRepository.findAllByIdOrIsbn(secondExistId, ISBN_ORWELL);
+        List<Book> actualOne1 = bookRepository.findAllByIdOrIsbn(ID_1, ISBN_ORWELL);
+        List<Book> actualOne2 = bookRepository.findAllByIdOrIsbn(NON_EXISTING_ID, ISBN_ORWELL);
         List<Book> actualOne3 = bookRepository.findAllByIdOrIsbn(ID_1, NON_EXISTING_ISBN);
         List<Book> actualZero =
                 bookRepository.findAllByIdOrIsbn(NON_EXISTING_ID, NON_EXISTING_ISBN);

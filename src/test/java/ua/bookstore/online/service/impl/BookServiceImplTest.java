@@ -6,16 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static ua.bookstore.online.utils.ConstantAndMethod.AUTHOR;
+import static ua.bookstore.online.utils.ConstantAndMethod.AUTHOR_ORWELL;
 import static ua.bookstore.online.utils.ConstantAndMethod.CATEGORY_IDS;
 import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ISBN;
-import static ua.bookstore.online.utils.ConstantAndMethod.PRICE;
-import static ua.bookstore.online.utils.ConstantAndMethod.TITLE;
+import static ua.bookstore.online.utils.ConstantAndMethod.ISBN_ORWELL;
+import static ua.bookstore.online.utils.ConstantAndMethod.PRICE_ORWELL;
+import static ua.bookstore.online.utils.ConstantAndMethod.TITLE_1984;
 import static ua.bookstore.online.utils.ConstantAndMethod.createBook;
 import static ua.bookstore.online.utils.ConstantAndMethod.createBookRequestDto;
 import static ua.bookstore.online.utils.ConstantAndMethod.getBookDto;
@@ -24,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,6 +59,12 @@ class BookServiceImplTest {
     @Mock
     private BookSpecificationBuilder bookSpecificationBuilder;
 
+    @AfterEach
+    void afterEach() {
+        // Verify method calls
+        verifyNoMoreInteractions(bookRepository, categoryService, bookMapper);
+    }
+
     @Test
     @DisplayName("Save new Book and return BookDto")
     void save_WithUniqueIsbnAndValidCategories_ReturnsBookDto() {
@@ -78,12 +84,6 @@ class BookServiceImplTest {
         assertNotNull(actual);
         BookDto expected = getBookDto(book);
         assertTrue(EqualsBuilder.reflectionEquals(expected, actual));
-
-        // Verify repository method calls
-        verify(bookRepository).findByIsbn(requestDto.isbn());
-        verifySaveMethods();
-        verifyMapperMethods();
-        verifyNoMoreInteractions(bookRepository, categoryService, bookMapper);
     }
 
     @Test
@@ -102,9 +102,6 @@ class BookServiceImplTest {
 
         // Then
         assertEquals("Can't find categories with ids: " + CATEGORY_IDS, actual.getMessage());
-
-        // Verify method calls
-        verifyNoMoreInteractions(bookRepository, categoryService, bookMapper);
     }
 
     @Test
@@ -123,9 +120,6 @@ class BookServiceImplTest {
 
         // Then
         assertEquals("Non uniq ISBN: " + requestDto.isbn(), actual.getMessage());
-
-        // Verify method calls
-        verifyNoMoreInteractions(bookMapper, bookRepository, categoryService);
     }
 
     @Test
@@ -143,11 +137,6 @@ class BookServiceImplTest {
 
         // Then
         assertEquals(booksFromRepository.size(), result.size());
-
-        // Verify method calls
-        verify(bookRepository).findAllBooks(any(Pageable.class));
-        verify(bookMapper, times(booksFromRepository.size())).toDto(any(Book.class));
-        verifyNoMoreInteractions(bookRepository, bookMapper);
     }
 
     @Test
@@ -169,11 +158,6 @@ class BookServiceImplTest {
         // Then
         BookDto expected = getBookDto(bookFromRepository);
         assertTrue(EqualsBuilder.reflectionEquals(expected, result));
-
-        // Verify method calls
-        verify(bookRepository).findByIdWithCategories(ID_1);
-        verify(bookMapper).toDto(bookFromRepository);
-        verifyNoMoreInteractions(bookRepository, bookMapper);
     }
 
     @Test
@@ -188,9 +172,6 @@ class BookServiceImplTest {
 
         // Then
         assertEquals("Book not found by id " + ID_1, actual.getMessage());
-
-        // Verify method calls
-        verifyNoMoreInteractions(bookRepository, bookMapper);
     }
 
     @Test
@@ -213,12 +194,6 @@ class BookServiceImplTest {
 
         // Then
         assertEquals(booksFromRepository.getSize(), actual.size());
-
-        // Verify method calls
-        verify(bookSpecificationBuilder).build(any());
-        verify(bookRepository).findAll(specification, pageable);
-        verify(bookMapper, times(booksFromRepository.getSize())).toDto(any());
-        verifyNoMoreInteractions(bookRepository, bookMapper);
     }
 
     @Test
@@ -239,12 +214,6 @@ class BookServiceImplTest {
 
         // Then
         assertTrue(EqualsBuilder.reflectionEquals(getBookDto(existingBook), actual));
-
-        // Verify repository method calls
-        verify(bookRepository).findAllByIdOrIsbn(ID_1, ISBN);
-        verifySaveMethods();
-        verifyMapperMethods();
-        verifyNoMoreInteractions(bookRepository, categoryService, bookMapper);
     }
 
     @Test
@@ -254,7 +223,7 @@ class BookServiceImplTest {
         CreateBookRequestDto requestDto = createBookRequestDto();
 
         // Mocking behavior
-        when(bookRepository.findAllByIdOrIsbn(ID_1, ISBN)).thenReturn(List.of());
+        when(bookRepository.findAllByIdOrIsbn(ID_1, ISBN_ORWELL)).thenReturn(List.of());
 
         // When
         Exception actual = assertThrows(EntityNotFoundException.class,
@@ -262,9 +231,6 @@ class BookServiceImplTest {
 
         // Then
         assertEquals("Can't find book to update by id " + ID_1, actual.getMessage());
-
-        // Verify method calls
-        verifyNoMoreInteractions(bookRepository, categoryService, bookMapper);
     }
 
     @Test
@@ -277,7 +243,7 @@ class BookServiceImplTest {
         Book bookWithSameIsbn = createBook();
 
         // Mocking behavior
-        when(bookRepository.findAllByIdOrIsbn(ID_1, ISBN)).thenReturn(
+        when(bookRepository.findAllByIdOrIsbn(ID_1, ISBN_ORWELL)).thenReturn(
                 List.of(existingBook, bookWithSameIsbn));
 
         // When
@@ -285,10 +251,7 @@ class BookServiceImplTest {
                 () -> bookService.update(ID_1, requestDto));
 
         // Then
-        assertEquals("Book with ISBN " + ISBN + " already exist", actual.getMessage());
-
-        // Verify method calls
-        verifyNoMoreInteractions(bookRepository, categoryService, bookMapper);
+        assertEquals("Book with ISBN " + ISBN_ORWELL + " already exist", actual.getMessage());
     }
 
     @Test
@@ -310,9 +273,6 @@ class BookServiceImplTest {
 
         // Then
         assertEquals("Can't find categories with ids: " + CATEGORY_IDS, actual.getMessage());
-
-        // Verify method calls
-        verifyNoMoreInteractions(bookRepository, categoryService, bookMapper);
     }
 
     @Test
@@ -320,14 +280,10 @@ class BookServiceImplTest {
     void delete_ExistingBook_SuccessfullyDeleted() {
         // Mocking behavior
         when(bookRepository.findById(ID_1)).thenReturn(Optional.of(new Book()));
+        doNothing().when(bookRepository).deleteById(ID_1);
 
         // When
         assertDoesNotThrow(() -> bookService.delete(ID_1));
-
-        // Verify method calls
-        verify(bookRepository).findById(ID_1);
-        verify(bookRepository).deleteById(ID_1);
-        verifyNoMoreInteractions(bookRepository);
     }
 
     @Test
@@ -342,9 +298,6 @@ class BookServiceImplTest {
 
         // Then
         assertEquals("Can't find book to delete by id " + ID_1, exception.getMessage());
-
-        // Verify method calls
-        verifyNoMoreInteractions(bookRepository);
     }
 
     @Test
@@ -357,19 +310,14 @@ class BookServiceImplTest {
         // Mocking behavior
         when(bookRepository.findAllByCategories_Id(ID_1, pageable)).thenReturn(booksFromRepository);
         when(bookMapper.toDtoWithoutCategories(any(Book.class))).thenReturn(
-                new BookDtoWithoutCategoryIds(ID_1, TITLE, AUTHOR, ISBN, PRICE, null, null));
+                new BookDtoWithoutCategoryIds(ID_1, TITLE_1984, AUTHOR_ORWELL, ISBN_ORWELL,
+                        PRICE_ORWELL, null, null));
 
         // When
         List<BookDtoWithoutCategoryIds> result = bookService.getByCategoryId(ID_1, pageable);
 
         // Then
         assertEquals(booksFromRepository.size(), result.size());
-
-        // Verify method calls
-        verify(bookRepository).findAllByCategories_Id(ID_1, pageable);
-        verify(bookMapper, times(booksFromRepository.size())).toDtoWithoutCategories(
-                any(Book.class));
-        verifyNoMoreInteractions(bookRepository, bookMapper);
     }
 
     private void mockingMapperMethods(Book book) {
@@ -378,7 +326,7 @@ class BookServiceImplTest {
     }
 
     private void mockingForUpdateMethod(Book existingBook, Set<Long> categoryIds) {
-        when(bookRepository.findAllByIdOrIsbn(ID_1, ISBN)).thenReturn(List.of(existingBook));
+        when(bookRepository.findAllByIdOrIsbn(ID_1, ISBN_ORWELL)).thenReturn(List.of(existingBook));
         when(categoryService.getAllExistedCategoryIdsFromIds(CATEGORY_IDS)).thenReturn(
                 categoryIds);
     }
@@ -387,15 +335,5 @@ class BookServiceImplTest {
         when(bookRepository.findByIsbn(requestDto.isbn())).thenReturn(Optional.empty());
         when(categoryService.getAllExistedCategoryIdsFromIds(CATEGORY_IDS)).thenReturn(
                 categoryIds);
-    }
-
-    private void verifySaveMethods() {
-        verify(bookRepository).save(any(Book.class));
-        verify(categoryService).getAllExistedCategoryIdsFromIds(CATEGORY_IDS);
-    }
-
-    private void verifyMapperMethods() {
-        verify(bookMapper).toModel(any(CreateBookRequestDto.class));
-        verify(bookMapper).toDto(any(Book.class));
     }
 }

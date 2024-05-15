@@ -1,0 +1,3 @@
+INSERT INTO users (id, email, password, first_name, last_name, shipping_address) VALUES (1, 'user@example.com', '$2a$10$FLKXC1WauyvJkUGnVmXQw.nJ.l3Laojg4l99aHloJz.XXYAwumI3a', 'Username', 'Userlastname', 'shipping address');
+INSERT INTO users (id, email, password, first_name, last_name, shipping_address) VALUES (2, 'manager@example.com', '$2a$10$FLKXC1WauyvJkUGnVmXQw.nJ.l3Laojg4l99aHloJz.XXYAwumI3a', 'Managername', 'Managerlastname', 'shipping address');
+INSERT INTO users (id, email, password, first_name, last_name, shipping_address) VALUES (3, 'admin@example.com', '$2a$10$FLKXC1WauyvJkUGnVmXQw.nJ.l3Laojg4l99aHloJz.XXYAwumI3a', 'Adminname', 'Adminlastname', 'shipping address');

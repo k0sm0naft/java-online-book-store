@@ -6,8 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
@@ -23,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +47,12 @@ class CategoryServiceImplTest {
     @Mock
     private CategoryMapper categoryMapper;
 
+    @AfterEach
+    void afterEach() {
+        // Verify method calls
+        verifyNoMoreInteractions(categoryRepository, categoryMapper);
+    }
+
     @Test
     @DisplayName("Get all categories from DB, returns list of CategoryResponseDto")
     void findAll_ReturnsListOfCategoryResponseDto() {
@@ -64,11 +70,6 @@ class CategoryServiceImplTest {
 
         // Then
         assertEquals(categoriesFromDb.size(), actual.size());
-
-        // Verify method calls
-        verify(categoryRepository).findAll(pageable);
-        verify(categoryMapper, times(categoriesFromDb.size())).toResponseDto(any(Category.class));
-        verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
 
     @Test
@@ -89,11 +90,6 @@ class CategoryServiceImplTest {
         // Then
         assertNotNull(actual);
         EqualsBuilder.reflectionEquals(responseDto, actual);
-
-        // Verify method calls
-        verify(categoryRepository).findById(ID_1);
-        verify(categoryMapper).toResponseDto(existingCategory);
-        verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
 
     @Test
@@ -107,10 +103,6 @@ class CategoryServiceImplTest {
                 () -> categoryService.getById(ID_1));
 
         assertEquals("Can't find category by id:" + ID_1, exception.getMessage());
-
-        // Verify method calls
-        verify(categoryRepository).findById(ID_1);
-        verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
 
     @Test
@@ -133,12 +125,6 @@ class CategoryServiceImplTest {
         // Then
         assertNotNull(actual);
         EqualsBuilder.reflectionEquals(requestDto, actual);
-
-        // Verify method calls
-        verify(categoryMapper).toModel(requestDto);
-        verify(categoryRepository).save(categoryToSave);
-        verify(categoryMapper).toResponseDto(savedCategory);
-        verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
 
     @Test
@@ -162,13 +148,6 @@ class CategoryServiceImplTest {
         // Then
         assertNotNull(actual);
         EqualsBuilder.reflectionEquals(responseDto, actual);
-
-        // Verify method calls
-        verify(categoryRepository).existsById(ID_1);
-        verify(categoryMapper).toModel(requestDto);
-        verify(categoryRepository).save(updatedCategory);
-        verify(categoryMapper).toResponseDto(updatedCategory);
-        verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
 
     @Test
@@ -183,10 +162,6 @@ class CategoryServiceImplTest {
 
         // Then
         assertEquals("Can't find category by id " + ID_1, actual.getMessage());
-
-        // Verify method calls
-        verify(categoryRepository).existsById(ID_1);
-        verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
 
     @Test
@@ -194,14 +169,10 @@ class CategoryServiceImplTest {
     void deleteById_ExistingCategory_Ok() {
         // Mocking behavior
         when(categoryRepository.findById(ID_1)).thenReturn(Optional.of(createCategory()));
+        doNothing().when(categoryRepository).deleteById(ID_1);
 
         // When
         assertDoesNotThrow(() -> categoryService.deleteById(ID_1));
-
-        // Verify method calls
-        verify(categoryRepository).findById(ID_1);
-        verify(categoryRepository).deleteById(ID_1);
-        verifyNoMoreInteractions(categoryRepository);
     }
 
     @Test
@@ -216,10 +187,6 @@ class CategoryServiceImplTest {
 
         // Then
         assertEquals("Can't find category to delete by id " + ID_1, exception.getMessage());
-
-        // Verify method calls
-        verify(categoryRepository).findById(ID_1);
-        verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
 
     @Test
@@ -243,10 +210,6 @@ class CategoryServiceImplTest {
                 .map(Category::getId)
                 .collect(Collectors.toSet());
         assertEquals(expected, actual);
-
-        // Verify method calls
-        verify(categoryRepository).findAllByIdIn(categoryIds);
-        verifyNoMoreInteractions(categoryRepository);
     }
 
     @Test
@@ -255,14 +218,13 @@ class CategoryServiceImplTest {
         // Given
         Set<Long> emptyCategoryIds = Collections.emptySet();
 
+        // Mocking behavior
+        when(categoryRepository.findAllByIdIn(emptyCategoryIds)).thenReturn(Collections.emptySet());
+
         // When
         Set<Long> actual = categoryService.getAllExistedCategoryIdsFromIds(emptyCategoryIds);
 
         // Then
         assertTrue(actual.isEmpty(), "Should be empty but was not");
-
-        // Verify method calls
-        verify(categoryRepository).findAllByIdIn(emptyCategoryIds);
-        verifyNoMoreInteractions(categoryRepository);
     }
 }
