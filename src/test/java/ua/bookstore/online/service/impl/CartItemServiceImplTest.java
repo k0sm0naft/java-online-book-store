@@ -7,14 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.getCartItem;
-import static ua.bookstore.online.utils.ConstantAndMethod.getCartItemRequestDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getCartItemResponseDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getOrwellBook;
-import static ua.bookstore.online.utils.ConstantAndMethod.getQuantityDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getShoppingCart;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUser;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.getCartItem;
+import static ua.bookstore.online.utils.TestDataUtils.getCartItemRequestDto;
+import static ua.bookstore.online.utils.TestDataUtils.getCartItemResponseDto;
+import static ua.bookstore.online.utils.TestDataUtils.getOrwellBook;
+import static ua.bookstore.online.utils.TestDataUtils.getQuantityDto;
+import static ua.bookstore.online.utils.TestDataUtils.getShoppingCart;
+import static ua.bookstore.online.utils.TestDataUtils.getUser;
 
 import java.util.Optional;
 import java.util.Set;
@@ -57,7 +57,7 @@ class CartItemServiceImplTest {
     }
 
     @Test
-    @DisplayName("Add new cart item to shopping cart")
+    @DisplayName("Add new cart item to shopping cart, returns CartItemResponseDto")
     void add_AddsNewCartItemToShoppingCart_ReturnsCartItemResponseDto() {
         // Given
         CartItemRequestDto requestDto = getCartItemRequestDto();
@@ -83,7 +83,7 @@ class CartItemServiceImplTest {
     }
 
     @Test
-    @DisplayName("Add existing cart item to shopping cart")
+    @DisplayName("Add existing cart item to shopping cart, returns CartItemResponseDto")
     void add_AddsExistingCartItemToShoppingCart_ReturnsCartItemResponseDto() {
         // Given
         CartItemRequestDto requestDto = getCartItemRequestDto();
@@ -108,7 +108,7 @@ class CartItemServiceImplTest {
     }
 
     @Test
-    @DisplayName("Update existing cart item quantity in shopping cart")
+    @DisplayName("Update existing cart item quantity in shopping cart, returns QuantityDto")
     void changeQuantity_UpdatesExistingCartItemQuantity_ReturnsQuantityDto() {
         // Given
         CartItem cartItem = getCartItem();
@@ -127,8 +127,8 @@ class CartItemServiceImplTest {
     }
 
     @Test
-    @DisplayName("Update non-existing cart item quantity in shopping cart")
-    void changeQuantity_UpdatesNonExistingCartItemQuantity_ReturnsQuantityDto() {
+    @DisplayName("Update non-existing cart item quantity in shopping cart, throws exception")
+    void changeQuantity_UpdatesNonExistingCartItemQuantity_ThrowsException() {
         // Given
         ShoppingCart shoppingCart = new ShoppingCart(getUser());
 
@@ -142,7 +142,7 @@ class CartItemServiceImplTest {
     }
 
     @Test
-    @DisplayName("Remove cart item from shopping cart")
+    @DisplayName("Remove cart item from shopping cart, returns void")
     void remove_RemovesCartItemFromShoppingCart_SuccessfullyRemoved() {
         // Given
         Long cartItemId = 1L;
@@ -158,7 +158,7 @@ class CartItemServiceImplTest {
     }
 
     @Test
-    @DisplayName("Remove non-existing cart item throws exception")
+    @DisplayName("Remove non-existing cart item, throws exception")
     void remove_RemoveNonExistingCartItem_ThrowsException() {
         // Given
         ShoppingCart shoppingCart = getShoppingCart();

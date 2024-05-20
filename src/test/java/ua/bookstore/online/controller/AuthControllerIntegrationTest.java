@@ -6,19 +6,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_ROLES;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_USERS_ROLES;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_USERS_SQL;
-import static ua.bookstore.online.utils.ConstantAndMethod.CLASSPATH;
-import static ua.bookstore.online.utils.ConstantAndMethod.FIRST_NAME;
-import static ua.bookstore.online.utils.ConstantAndMethod.LAST_NAME;
-import static ua.bookstore.online.utils.ConstantAndMethod.PASSWORD;
-import static ua.bookstore.online.utils.ConstantAndMethod.SHIPPING_ADDRESS;
-import static ua.bookstore.online.utils.ConstantAndMethod.TEAR_DOWN_DB_SQL;
-import static ua.bookstore.online.utils.ConstantAndMethod.USER_EMAIL;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUserRequestDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUserResponseDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_ROLES;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_USERS_ROLES;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_USERS_SQL;
+import static ua.bookstore.online.utils.TestDataUtils.CLASSPATH;
+import static ua.bookstore.online.utils.TestDataUtils.FIRST_NAME;
+import static ua.bookstore.online.utils.TestDataUtils.LAST_NAME;
+import static ua.bookstore.online.utils.TestDataUtils.PASSWORD;
+import static ua.bookstore.online.utils.TestDataUtils.SHIPPING_ADDRESS;
+import static ua.bookstore.online.utils.TestDataUtils.TEAR_DOWN_DB_SQL;
+import static ua.bookstore.online.utils.TestDataUtils.USER_EMAIL;
+import static ua.bookstore.online.utils.TestDataUtils.getUserRequestDto;
+import static ua.bookstore.online.utils.TestDataUtils.getUserResponseDto;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -61,7 +61,7 @@ class AuthControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Register new user")
+    @DisplayName("Register new user, expected: status - 201, response - UserResponseDto")
     void register_RegisterNewUser_ReturnsUserResponseDto() throws Exception {
         // Given
         UserRegistrationRequestDto userRequestDto = getUserRequestDto();
@@ -84,8 +84,10 @@ class AuthControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Register new user with invalid passwords")
-    void register_RegisterNewUserWithInvalidPasswords_RespondBadRequest() throws Exception {
+    @DisplayName("Register new user with invalid passwords, "
+            + "expected: status - 400, response -  ProblemDetail response")
+    void register_RegisterNewUserWithInvalidPasswords_RespondBadRequestWithProblemDetail()
+            throws Exception {
         // Given
         UserRegistrationRequestDto userRequestDto =
                 new UserRegistrationRequestDto(USER_EMAIL, PASSWORD, "123456789", FIRST_NAME,
@@ -113,7 +115,7 @@ class AuthControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Login existing user")
+    @DisplayName("Login existing user, expected: status - 202, response - UserLoginResponseDto")
     @Sql(scripts = {
             CLASSPATH + TEAR_DOWN_DB_SQL,
             CLASSPATH + ADD_USERS_SQL,

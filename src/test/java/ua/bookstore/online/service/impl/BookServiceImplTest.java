@@ -9,15 +9,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static ua.bookstore.online.utils.ConstantAndMethod.AUTHOR_ORWELL;
-import static ua.bookstore.online.utils.ConstantAndMethod.CATEGORY_IDS;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ISBN_ORWELL;
-import static ua.bookstore.online.utils.ConstantAndMethod.PRICE_ORWELL;
-import static ua.bookstore.online.utils.ConstantAndMethod.TITLE_1984;
-import static ua.bookstore.online.utils.ConstantAndMethod.createBook;
-import static ua.bookstore.online.utils.ConstantAndMethod.createBookRequestDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getBookDto;
+import static ua.bookstore.online.utils.TestDataUtils.AUTHOR_ORWELL;
+import static ua.bookstore.online.utils.TestDataUtils.CATEGORY_IDS;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.ISBN_ORWELL;
+import static ua.bookstore.online.utils.TestDataUtils.PRICE_ORWELL;
+import static ua.bookstore.online.utils.TestDataUtils.TITLE_1984;
+import static ua.bookstore.online.utils.TestDataUtils.createBook;
+import static ua.bookstore.online.utils.TestDataUtils.createBookRequestDto;
+import static ua.bookstore.online.utils.TestDataUtils.getBookDto;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -66,7 +66,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Save new Book and return BookDto")
+    @DisplayName("Save new Book, returns BookDto")
     void save_WithUniqueIsbnAndValidCategories_ReturnsBookDto() {
         // Given
         CreateBookRequestDto requestDto = createBookRequestDto();
@@ -87,7 +87,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Save new Book with non-existing categories trows exception")
+    @DisplayName("Save new Book with non-existing categories, trows exception")
     void save_WithNonExistingCategories_ThrowsException() {
         // Given
         CreateBookRequestDto requestDto = createBookRequestDto();
@@ -105,7 +105,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Save new Book with existing ISBN trows exception")
+    @DisplayName("Save new Book with existing ISBN, trows exception")
     void save_WithNonUniqueIsbn_ThrowsException() {
         // Given
         CreateBookRequestDto requestDto = createBookRequestDto();
@@ -123,7 +123,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Get all books from repository")
+    @DisplayName("Get all books from repository, returns list of BookDto")
     void getAll_ReturnsAllBooksFromDb() {
         // Given
         List<Book> booksFromRepository = List.of(createBook(), createBook());
@@ -140,7 +140,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Get existing book from DB and return BookDto")
+    @DisplayName("Get existing book from DB, returns BookDto")
     void getById_ExistingId_ReturnsBookDto() {
         // Given
         Book bookFromRepository = createBook();
@@ -161,7 +161,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Get non-existing book from DB throws exception")
+    @DisplayName("Get non-existing book from DB, throws exception")
     void getById_NonExistingId_ThrowsException() {
         // Mocking behavior for repository
         when(bookRepository.findByIdWithCategories(ID_1)).thenReturn(Optional.empty());
@@ -175,7 +175,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Get by parameter and return filtered list of BoolDto")
+    @DisplayName("Get by parameter, returns filtered list of BookDto")
     void getByParameters_GetListOfBooks_ReturnsFilteredBookDtos() {
         // Given
         Pageable pageable = Pageable.unpaged();
@@ -197,7 +197,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Update existing book and unique ISBN and return BookDto")
+    @DisplayName("Update existing book and unique ISBN, returns BookDto")
     void update_ExistingBook_ReturnsBookDto() {
         // Given
         Book existingBook = createBook();
@@ -217,7 +217,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Update non-existing book throws exception")
+    @DisplayName("Update non-existing book, throws exception")
     void update_NonExistingBook_ThrowsException() {
         // Given
         CreateBookRequestDto requestDto = createBookRequestDto();
@@ -234,7 +234,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Update with non unique ISBN throws exception")
+    @DisplayName("Update with non unique ISBN, throws exception")
     void update_NonUniqueIsbn_ThrowsException() {
         // Given
         CreateBookRequestDto requestDto = createBookRequestDto();
@@ -255,7 +255,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Update with invalid categories IDs throws exception")
+    @DisplayName("Update with invalid categories IDs, throws exception")
     void update_NonExistingCategories_ThrowsException() {
         // Given
         CreateBookRequestDto requestDto = createBookRequestDto();
@@ -276,7 +276,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Delete existing book returns void")
+    @DisplayName("Delete existing book, returns void")
     void delete_ExistingBook_SuccessfullyDeleted() {
         // Mocking behavior
         when(bookRepository.findById(ID_1)).thenReturn(Optional.of(new Book()));
@@ -287,7 +287,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Delete non-existing book throws exception")
+    @DisplayName("Delete non-existing book, throws exception")
     void delete_NonExistingBook_ThrowsException() {
         // Mocking behavior
         when(bookRepository.findById(ID_1)).thenReturn(Optional.empty());
@@ -301,8 +301,8 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("Get all books by category")
-    void getByCategoryId_ReturnsBooksForExistingCategory() {
+    @DisplayName("Get all books by category, returns list of BookDtoWithoutCategoryIds")
+    void getByCategoryId_FindAllBooksByCategoryId_ReturnsBooksForExistingCategory() {
         // Given
         Pageable pageable = Pageable.unpaged();
         List<Book> booksFromRepository = List.of(createBook(), createBook());

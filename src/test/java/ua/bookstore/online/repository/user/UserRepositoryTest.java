@@ -2,13 +2,13 @@ package ua.bookstore.online.repository.user;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_ROLES;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_USERS_ROLES;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_USERS_SQL;
-import static ua.bookstore.online.utils.ConstantAndMethod.CLASSPATH;
-import static ua.bookstore.online.utils.ConstantAndMethod.USER_EMAIL;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUser;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_ROLES;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_USERS_ROLES;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_USERS_SQL;
+import static ua.bookstore.online.utils.TestDataUtils.CLASSPATH;
+import static ua.bookstore.online.utils.TestDataUtils.USER_EMAIL;
+import static ua.bookstore.online.utils.TestDataUtils.getUser;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
 
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -34,7 +34,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find user by email with roles")
+    @DisplayName("Find user by email with roles, returns optional of user")
     @Sql(scripts = {
             CLASSPATH + ADD_USERS_SQL,
             CLASSPATH + ADD_ROLES,
@@ -49,8 +49,6 @@ public class UserRepositoryTest {
 
         // Then
         assertTrue(actual.isPresent(), "User should be present");
-        System.out.println(expected);
-        System.out.println(actual.get());
         assertTrue(EqualsBuilder.reflectionEquals(expected, actual.get(), "password", "roles"));
         assertFalse(actual.get().getRoles().isEmpty());
     }

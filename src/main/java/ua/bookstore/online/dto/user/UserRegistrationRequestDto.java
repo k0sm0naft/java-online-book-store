@@ -15,7 +15,7 @@ import ua.bookstore.online.lib.FieldMatch;
 public record UserRegistrationRequestDto(
         @NotBlank
         @Email(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
-        @Schema(example = "exemple@exemple.com")
+        @Schema(example = "example@example.com")
         String email,
         @NotBlank
         @Length(min = 8, max = 24)

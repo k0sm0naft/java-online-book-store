@@ -2,13 +2,17 @@ package ua.bookstore.online.repository.shopping.cart;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ua.bookstore.online.utils.ConstantAndMethod.NON_EXISTING_ID;
-import static ua.bookstore.online.utils.ConstantAndMethod.beforeEachShoppingCartTest;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUser;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.NON_EXISTING_ID;
+import static ua.bookstore.online.utils.TestDataUtils.beforeEachShoppingCartTest;
+import static ua.bookstore.online.utils.TestDataUtils.getClearedStatistics;
+import static ua.bookstore.online.utils.TestDataUtils.getUser;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.verifyCountOfDbCalls;
 
+import jakarta.persistence.EntityManager;
 import java.util.Optional;
 import javax.sql.DataSource;
+import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +28,8 @@ import ua.bookstore.online.model.User;
 public class ShoppingCartRepositoryTest {
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
+    @Autowired
+    private EntityManager entityManager;
 
     @BeforeEach
     public void beforeEach(@Autowired DataSource dataSource) {
@@ -36,7 +42,7 @@ public class ShoppingCartRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find shopping cart by user")
+    @DisplayName("Find shopping cart by user, returns optional of shopping cart")
     void findByUser_FindingExistingAndNonExistingShoppingCarts_ReturnsOptionalOfShoppingCarts() {
         // Given
         User existingUser = getUser();
@@ -55,18 +61,21 @@ public class ShoppingCartRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find shopping cart by user with cart items")
-    void findByUserWithCartItems_FindingExistingShoppingCart_ReturnsOptionalOfShoppingCart() {
+    @DisplayName("Find shopping cart by user with cart items, returns optional of shopping cart with cart items")
+    void findByUserWithCartItems_FindingExistingShoppingCart_ReturnsOptionalOfCartWithCartItems() {
         // Given
+        Statistics statistics = getClearedStatistics(entityManager);
         User user = getUser();
 
         // When
-        Optional<ShoppingCart> actual = shoppingCartRepository.findByUser(user);
+        Optional<ShoppingCart> actual = shoppingCartRepository.findByUserWithCartItems(user);
 
         // Then
         assertTrue(actual.isPresent(),
                 "Optional of shopping cart by existing user should be present");
         int sizeOfCartItems = 2;
         assertEquals(sizeOfCartItems, actual.get().getCartItems().size());
+
+        verifyCountOfDbCalls(1, statistics);
     }
 }

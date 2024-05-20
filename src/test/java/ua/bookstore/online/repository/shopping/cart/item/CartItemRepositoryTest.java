@@ -3,12 +3,12 @@ package ua.bookstore.online.repository.shopping.cart.item;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.NON_EXISTING_ID;
-import static ua.bookstore.online.utils.ConstantAndMethod.beforeEachShoppingCartTest;
-import static ua.bookstore.online.utils.ConstantAndMethod.getOrwellBook;
-import static ua.bookstore.online.utils.ConstantAndMethod.getShoppingCart;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.NON_EXISTING_ID;
+import static ua.bookstore.online.utils.TestDataUtils.beforeEachShoppingCartTest;
+import static ua.bookstore.online.utils.TestDataUtils.getOrwellBook;
+import static ua.bookstore.online.utils.TestDataUtils.getShoppingCart;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
 
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -40,7 +40,7 @@ public class CartItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find cart item by book and shopping cart")
+    @DisplayName("Find cart item by book and shopping cart, returns optional of cart item")
     void findByBookAndShoppingCart_FindingCartItem_ReturnsOptionalOfCartItem() {
         // Given
         Book existingBook = getOrwellBook();
@@ -62,8 +62,8 @@ public class CartItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find if cart item exist by ID and shopping cart")
-    void existsByIdAndShoppingCart_FindingCartItems_ReturnsOptionalOfCartItems() {
+    @DisplayName("Find if cart item exist by ID and shopping cart, returns true if exist")
+    void existsByIdAndShoppingCart_FindingCartItems_ReturnsBoolean() {
         // Given
         ShoppingCart shoppingCart = getShoppingCart();
 
@@ -80,7 +80,7 @@ public class CartItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("Remove cart item by ID and shopping cart")
+    @DisplayName("Remove cart item by ID and shopping cart, count of cart items in DB become less on 1 item")
     void deleteByIdAndShoppingCart_RemoveCartItem_SuccessfullyDeleted() {
         // Given
         ShoppingCart shoppingCart = getShoppingCart();

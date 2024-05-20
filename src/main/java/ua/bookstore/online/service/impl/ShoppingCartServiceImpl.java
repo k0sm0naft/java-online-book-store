@@ -42,7 +42,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Transactional
     public QuantityDto updateCartItem(Long cartItemId, QuantityDto quantityDto, User user) {
         ShoppingCart shoppingCart = cartRepository.findByUser(user).orElseThrow(
-                () -> new EntityNotFoundException("Can't update item in an empty cart"));
+                () -> new EntityNotFoundException("Can't update item by ID: " + cartItemId));
         return cartItemService.changeQuantity(cartItemId, quantityDto, shoppingCart);
     }
 
@@ -50,7 +50,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Transactional
     public void removeCartItem(Long cartItemId, User user) {
         ShoppingCart shoppingCart = cartRepository.findByUser(user).orElseThrow(
-                () -> new EntityNotFoundException("Can't remove item from empty cart"));
+                () -> new EntityNotFoundException("Can't remove item by ID: " + cartItemId));
         cartItemService.remove(cartItemId, shoppingCart);
     }
 

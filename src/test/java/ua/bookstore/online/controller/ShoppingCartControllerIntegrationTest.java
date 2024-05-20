@@ -10,15 +10,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_2;
-import static ua.bookstore.online.utils.ConstantAndMethod.TITLE_MOBI_DICK;
-import static ua.bookstore.online.utils.ConstantAndMethod.beforeEachShoppingCartTest;
-import static ua.bookstore.online.utils.ConstantAndMethod.getCartItemRequestDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getCartItemResponseDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getQuantityDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUser;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.ID_2;
+import static ua.bookstore.online.utils.TestDataUtils.TITLE_MOBI_DICK;
+import static ua.bookstore.online.utils.TestDataUtils.beforeEachShoppingCartTest;
+import static ua.bookstore.online.utils.TestDataUtils.getCartItemRequestDto;
+import static ua.bookstore.online.utils.TestDataUtils.getCartItemResponseDto;
+import static ua.bookstore.online.utils.TestDataUtils.getQuantityDto;
+import static ua.bookstore.online.utils.TestDataUtils.getUser;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -69,8 +69,8 @@ class ShoppingCartControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get user's shopping cart")
-    void getShoppingCart_GetUsersShoppingCart_ReturnsShoppingCartWithItems() throws Exception {
+    @DisplayName("Get user's shopping cart, expected: status - 200, response - ShoppingCartDto")
+    void getShoppingCart_GetUsersShoppingCart_ReturnsShoppingCartDtoWithItemDtos() throws Exception {
         // Given
         CartItemResponseDto firstCartItemResponse = getCartItemResponseDto();
         CartItemResponseDto secondCartItemResponse =
@@ -96,9 +96,9 @@ class ShoppingCartControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Add new cart item")
+    @DisplayName("Add new cart item, expected: status - 201, response - CartItemResponseDto")
     @WithMockUser
-    void addCartItem_AddNewCartItem_ReturnsExpectedCartItem() throws Exception {
+    void addCartItem_AddNewCartItem_ReturnsExpectedCartItemDto() throws Exception {
         // Given
         CartItemRequestDto requestDto = getCartItemRequestDto();
         CartItemResponseDto expected = getCartItemResponseDto();
@@ -121,9 +121,9 @@ class ShoppingCartControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Update cart item quantity by ID")
+    @DisplayName("Update cart item quantity by ID, expected: status - 202, response - QuantityDto")
     @WithMockUser
-    void updateCartItem_UpdateCartItemQuantity_ReturnsExpectedQuantity() throws Exception {
+    void updateCartItem_UpdateCartItemQuantity_ReturnsExpectedQuantityDto() throws Exception {
         // Given
         String url = ITEM_URI + "/" + ID_1;
         QuantityDto expected = getQuantityDto();
@@ -146,9 +146,9 @@ class ShoppingCartControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Delete a cart item by ID")
+    @DisplayName("Successfully delete a cart item by ID, expected: status - 204")
     @WithMockUser
-    void deleteCartItem_DeleteCartItemById_SuccessfullyDeleted() throws Exception {
+    void deleteCartItem_DeleteCartItemById_RespondNoContent() throws Exception {
         // Given
         String url = ITEM_URI + "/" + ID_1;
 

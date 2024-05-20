@@ -9,15 +9,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_SQL;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.beforeEachBookRepositoryTest;
-import static ua.bookstore.online.utils.ConstantAndMethod.getClassic;
-import static ua.bookstore.online.utils.ConstantAndMethod.getDystopian;
-import static ua.bookstore.online.utils.ConstantAndMethod.getFiction;
-import static ua.bookstore.online.utils.ConstantAndMethod.getMelville;
-import static ua.bookstore.online.utils.ConstantAndMethod.getOrwell;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_CATEGORIES_SQL;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.beforeEachBookRepositoryTest;
+import static ua.bookstore.online.utils.TestDataUtils.getClassic;
+import static ua.bookstore.online.utils.TestDataUtils.getDystopian;
+import static ua.bookstore.online.utils.TestDataUtils.getFiction;
+import static ua.bookstore.online.utils.TestDataUtils.getMelville;
+import static ua.bookstore.online.utils.TestDataUtils.getOrwell;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
@@ -75,9 +75,9 @@ class CategoryControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create new category")
+    @DisplayName("Create new category, expected: status - 201, response - CategoryResponseDto")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
-    void createCategory_CreateNewCategory_ReturnsExpectedCategory() throws Exception {
+    void createCategory_CreateNewCategory_ReturnsExpectedCategoryDto() throws Exception {
         // Given
         CategoryRequestDto requestDto = new CategoryRequestDto("Classic", "Classic description");
         CategoryResponseDto expected = getClassic();
@@ -100,9 +100,9 @@ class CategoryControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Update existing category")
+    @DisplayName("Update existing category, expected: status - 202, response - CategoryResponseDto")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
-    void updateCategory_UpdateExistingCategory_ReturnsExpectedCategory() throws Exception {
+    void updateCategory_UpdateExistingCategory_ReturnsExpectedCategoryDto() throws Exception {
         // Given
         String updatedName = "updatedName";
         String updatedDescription = "updatedDescription";
@@ -131,9 +131,9 @@ class CategoryControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get two existing category")
+    @DisplayName("Get two existing category, expected: status - 200, response - CategoryResponseDto")
     @WithMockUser
-    void getAll_GetTwoExistingCategories_ReturnsExpectedCategories() throws Exception {
+    void getAll_GetTwoExistingCategories_ReturnsExpectedCategoryDtos() throws Exception {
         // Given
         List<CategoryResponseDto> expected = List.of(getFiction(), getDystopian());
 
@@ -156,9 +156,9 @@ class CategoryControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get existing category by ID")
+    @DisplayName("Get existing category by ID, expected: status - 200, response - CategoryResponseDto")
     @WithMockUser
-    void getCategoryById_GetExistingCategory_ReturnsExpectedCategory() throws Exception {
+    void getCategoryById_GetExistingCategory_ReturnsExpectedCategoryDto() throws Exception {
         // Given
         String url = URI + "/" + ID_1;
         CategoryResponseDto expected = getFiction();
@@ -178,9 +178,9 @@ class CategoryControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get all books from existing category by ID")
+    @DisplayName("Get all books from existing category by ID, expected: status - 200, response - BookDto[]")
     @WithMockUser
-    void getBooksByCategoryId_GetAllBooksByCategory_ReturnsExpectedBooks(
+    void getBooksByCategoryId_GetAllBooksByCategory_ReturnsExpectedBookDtos(
             @Autowired DataSource dataSource) throws Exception {
         // Given
         beforeEachBookRepositoryTest(dataSource);
@@ -205,9 +205,9 @@ class CategoryControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Delete existing category")
+    @DisplayName("Successfully delete existing category, expected: status - 204")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
-    void deleteCategory_DeleteExistingCategory_SuccessfullyDeleted() throws Exception {
+    void deleteCategory_DeleteExistingCategory_RespondNoContent() throws Exception {
         // Given
         String url = URI + "/" + ID_1;
 

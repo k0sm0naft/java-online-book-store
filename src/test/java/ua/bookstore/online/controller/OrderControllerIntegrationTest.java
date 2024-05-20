@@ -9,14 +9,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.SHIPPING_ADDRESS;
-import static ua.bookstore.online.utils.ConstantAndMethod.beforeEachOrderTest;
-import static ua.bookstore.online.utils.ConstantAndMethod.getFirstOrderResponseDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getMalvilleOrderItemResponse;
-import static ua.bookstore.online.utils.ConstantAndMethod.getOrwellOrderItemResponse;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUser;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.SHIPPING_ADDRESS;
+import static ua.bookstore.online.utils.TestDataUtils.beforeEachOrderTest;
+import static ua.bookstore.online.utils.TestDataUtils.getFirstOrderResponseDto;
+import static ua.bookstore.online.utils.TestDataUtils.getMalvilleOrderItemResponse;
+import static ua.bookstore.online.utils.TestDataUtils.getOrwellOrderItemResponse;
+import static ua.bookstore.online.utils.TestDataUtils.getUser;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
@@ -69,7 +69,7 @@ class OrderControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create new order")
+    @DisplayName("Create new order, expected: status - 201, response - OrderResponseDto")
     @WithMockUser
     void createOrder_CreateNewOrder_ReturnsOrderResponseDto() throws Exception {
         // Given
@@ -98,9 +98,9 @@ class OrderControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get all user's orders")
+    @DisplayName("Get all user's orders, expected: status - 200, response - OrderResponseDto[]")
     @WithMockUser
-    void getOrderHistory_GetAllUsersOrder_ReturnsExpectedOrdersWithItems() throws Exception {
+    void getOrderHistory_GetAllUsersOrder_ReturnsExpectedOrderDtosWithItemDtos() throws Exception {
         // Given
         List<OrderResponseDto> expected = List.of(getFirstOrderResponseDto());
 
@@ -124,9 +124,9 @@ class OrderControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Update status of order")
+    @DisplayName("Successfully update status of order, expected: status - 202")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
-    void updateStatus_UpdatingStatusOfOrder_SuccessfullyUpdated() throws Exception {
+    void updateStatus_UpdatingStatusOfOrder_RespondAccepted() throws Exception {
         // Given
         String url = ORDERS_URI + "/" + ID_1;
         StatusDto expected = new StatusDto(Order.Status.PROCESSED);
@@ -141,9 +141,9 @@ class OrderControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get order items from user's order")
+    @DisplayName("Get order items from user's order, expected: status - 200, response - OrderItemResponseDto[]")
     @WithMockUser
-    void getAllOrderItems_GetAllUsersOrderItems_ReturnsExpectedOrderItems() throws Exception {
+    void getAllOrderItems_GetAllUsersOrderItems_ReturnsExpectedOrderItemDtos() throws Exception {
         // Given
         String url = ORDERS_URI + '/' + ID_1 + ITEMS_URI;
         List<OrderItemResponseDto> expected =
@@ -167,9 +167,9 @@ class OrderControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get user's order item by ID")
+    @DisplayName("Get user's order item by ID, expected: status - 200, response - OrderItemResponseDto")
     @WithMockUser
-    void getOrderItem_GetOrderItemById_ReturnsExpectedOrderItem() throws Exception {
+    void getOrderItem_GetOrderItemById_ReturnsExpectedOrderItemDto() throws Exception {
         // Given
         String url = ORDERS_URI + '/' + ID_1 + ITEMS_URI + '/' + ID_1;
         OrderItemResponseDto expected = getOrwellOrderItemResponse();

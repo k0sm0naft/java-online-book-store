@@ -1,9 +1,9 @@
 package ua.bookstore.online.repository.role;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_ROLES;
-import static ua.bookstore.online.utils.ConstantAndMethod.CLASSPATH;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_ROLES;
+import static ua.bookstore.online.utils.TestDataUtils.CLASSPATH;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
 
 import java.util.Set;
 import javax.sql.DataSource;
@@ -29,11 +29,11 @@ public class RoleRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find user by email with roles")
+    @DisplayName("Find all roles from set of role names, returns set of roles")
     @Sql(scripts = {
             CLASSPATH + ADD_ROLES
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    void findByEmail_FindingUserByEmail_ReturnsOptionalOfUserWithRoles() {
+    void getAllByNameIn_FindingRolesFromSetOfRoleNames_ReturnsSetOfRoles() {
         // Given
         RoleName roleNameAdmin = RoleName.ROLE_ADMIN;
         RoleName roleNameUser = RoleName.ROLE_USER;

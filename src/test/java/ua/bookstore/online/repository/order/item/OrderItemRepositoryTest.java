@@ -2,19 +2,23 @@ package ua.bookstore.online.repository.order.item;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_2;
-import static ua.bookstore.online.utils.ConstantAndMethod.NON_EXISTING_ID;
-import static ua.bookstore.online.utils.ConstantAndMethod.beforeEachOrderTest;
-import static ua.bookstore.online.utils.ConstantAndMethod.getFirstOrder;
-import static ua.bookstore.online.utils.ConstantAndMethod.getMalvilleOrderItem;
-import static ua.bookstore.online.utils.ConstantAndMethod.getOrwellOrderItem;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUser;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.ID_2;
+import static ua.bookstore.online.utils.TestDataUtils.NON_EXISTING_ID;
+import static ua.bookstore.online.utils.TestDataUtils.beforeEachOrderTest;
+import static ua.bookstore.online.utils.TestDataUtils.getClearedStatistics;
+import static ua.bookstore.online.utils.TestDataUtils.getFirstOrder;
+import static ua.bookstore.online.utils.TestDataUtils.getMalvilleOrderItem;
+import static ua.bookstore.online.utils.TestDataUtils.getOrwellOrderItem;
+import static ua.bookstore.online.utils.TestDataUtils.getUser;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.verifyCountOfDbCalls;
 
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
+import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +37,8 @@ import ua.bookstore.online.model.User;
 public class OrderItemRepositoryTest {
     @Autowired
     private OrderItemRepository orderItemRepository;
+    @Autowired
+    private EntityManager entityManager;
 
     @BeforeEach
     public void beforeEach(@Autowired DataSource dataSource) {
@@ -45,9 +51,10 @@ public class OrderItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("Get all order items from user's order by ID")
+    @DisplayName("Find all order items from user's order by ID, returns list of order items")
     void fidAllByOrderAndUser_GettingAllOrderItemsFromOrder_ReturnsListOfOrderItem() {
         // Given
+        Statistics statistics = getClearedStatistics(entityManager);
         List<OrderItem> expected = List.of(getOrwellOrderItem(ID_1, getFirstOrder()),
                 getMalvilleOrderItem(ID_2, getFirstOrder()));
 
@@ -60,16 +67,16 @@ public class OrderItemRepositoryTest {
         assertEquals(expected.size(), actual.size());
         Book expextedBook = expected.getFirst().getBook();
         Book actualBook = actual.getFirst().getBook();
-        System.out.println(expextedBook);
-        System.out.println(actualBook);
-        assertTrue(EqualsBuilder.reflectionEquals(expextedBook, actualBook));
+        assertTrue(EqualsBuilder.reflectionEquals(expextedBook, actualBook, "categories"));
 
+        verifyCountOfDbCalls(1, statistics);
     }
 
     @Test
-    @DisplayName("Find order item by ID and user's order ID")
+    @DisplayName("Find order item by ID and user's order ID, returns optional of order item")
     void findByIdAndOrder_FindingOrderItems_ReturnsOptionalOfOrderItems() {
         // Given
+        Statistics statistics = getClearedStatistics(entityManager);
         User user = getUser();
         OrderItem expected = getOrwellOrderItem(ID_1, getFirstOrder());
 
@@ -85,6 +92,8 @@ public class OrderItemRepositoryTest {
         assertTrue(actualNotExisted.isEmpty(), "Optional of existing order item should be empty");
         assertTrue(EqualsBuilder.reflectionEquals(expected, actualExisted.get(), "order", "book"));
         assertTrue(EqualsBuilder
-                .reflectionEquals(expected.getBook(), actualExisted.get().getBook()));
+                .reflectionEquals(expected.getBook(), actualExisted.get().getBook(), "categories"));
+
+        verifyCountOfDbCalls(2, statistics);
     }
 }

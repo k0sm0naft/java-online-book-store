@@ -1,5 +1,8 @@
 package ua.bookstore.online.utils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.LocalDateTime;
@@ -8,6 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
@@ -33,7 +38,7 @@ import ua.bookstore.online.model.RoleName;
 import ua.bookstore.online.model.ShoppingCart;
 import ua.bookstore.online.model.User;
 
-public class ConstantAndMethod {
+public final class TestDataUtils {
     public static final Long ID_1 = 1L;
     public static final Long ID_2 = 2L;
     public static final Long ID_3 = 3L;
@@ -73,6 +78,11 @@ public class ConstantAndMethod {
     public static final String ADD_ROLES = "database/roles/add-roles.sql";
     public static final String ADD_THREE_ORDERS_SQL = "database/orders/add-three-orders.sql";
     public static final String ADD_ORDER_ITEMS_SQL = "database/orders/items/add-order_items.sql";
+
+    private TestDataUtils() {
+        throw new UnsupportedOperationException(
+                "This is a utility class and cannot be instantiated");
+    }
 
     @SneakyThrows
     public static void tearDown(DataSource dataSource) {
@@ -131,6 +141,20 @@ public class ConstantAndMethod {
             ScriptUtils.executeSqlScript(connection,
                     new ClassPathResource(ADD_CATEGORIES_FOR_BOOKS_SQL));
         }
+    }
+
+    public static Statistics getClearedStatistics(EntityManager entityManager) {
+        SessionFactory sessionFactory = entityManager.getEntityManagerFactory()
+                                                     .unwrap(SessionFactory.class);
+        Statistics statistics = sessionFactory.getStatistics();
+        statistics.setStatisticsEnabled(true);
+        statistics.clear();
+        return statistics;
+    }
+
+    public static void verifyCountOfDbCalls(int count, Statistics statistics) {
+        long queryCount = statistics.getPrepareStatementCount();
+        assertEquals(count, queryCount, count + " query should be executed");
     }
 
     public static CreateBookRequestDto createBookRequestDto() {

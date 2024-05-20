@@ -8,16 +8,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_2;
-import static ua.bookstore.online.utils.ConstantAndMethod.NON_EXISTING_ID;
-import static ua.bookstore.online.utils.ConstantAndMethod.SHIPPING_ADDRESS;
-import static ua.bookstore.online.utils.ConstantAndMethod.getCartItem;
-import static ua.bookstore.online.utils.ConstantAndMethod.getMalvilleOrderItem;
-import static ua.bookstore.online.utils.ConstantAndMethod.getSecondOrder;
-import static ua.bookstore.online.utils.ConstantAndMethod.getSecondOrderResponseDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getShoppingCart;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUser;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.ID_2;
+import static ua.bookstore.online.utils.TestDataUtils.NON_EXISTING_ID;
+import static ua.bookstore.online.utils.TestDataUtils.SHIPPING_ADDRESS;
+import static ua.bookstore.online.utils.TestDataUtils.getCartItem;
+import static ua.bookstore.online.utils.TestDataUtils.getMalvilleOrderItem;
+import static ua.bookstore.online.utils.TestDataUtils.getSecondOrder;
+import static ua.bookstore.online.utils.TestDataUtils.getSecondOrderResponseDto;
+import static ua.bookstore.online.utils.TestDataUtils.getShoppingCart;
+import static ua.bookstore.online.utils.TestDataUtils.getUser;
 
 import java.util.List;
 import java.util.Optional;
@@ -69,7 +69,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    @DisplayName("Save order to DB from valid shopping cart")
+    @DisplayName("Save order to DB from valid shopping cart, returns OrderResponseDto")
     void saveOrder_SaveOrderFromValidCart_ReturnsOrderDto() {
         // Given
         User user = getUser();
@@ -99,7 +99,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    @DisplayName("Save order to DB from non-existing shopping cart")
+    @DisplayName("Save order to DB from non-existing shopping cart, throws exception")
     void saveOrder_SaveOrderFromNonExistingCart_ThrowException() {
         // Given
         User user = getUser();
@@ -119,7 +119,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    @DisplayName("Save order to DB from empty shopping cart")
+    @DisplayName("Save order to DB from empty shopping cart, throws exception")
     void saveOrder_SaveOrderFromEmptyCart_ThrowException() {
         // Given
         User user = getUser();
@@ -139,8 +139,8 @@ class OrderServiceImplTest {
     }
 
     @Test
-    @DisplayName("Get all order item DTOs")
-    void getAllOrders_GetAllOrders_ReturnsListOfOrdersDtos() {
+    @DisplayName("Get all order item DTOs, returns list of OrderResponseDto")
+    void getAllOrders_GetAllOrders_ReturnsListOfOrderDtos() {
         // Given
         User user = getUser();
         Pageable pageable = Pageable.unpaged();
@@ -162,7 +162,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    @DisplayName("Update orders status successfully")
+    @DisplayName("Update orders status, returns void")
     void updateStatus_UpdateStatus_SuccessfullyUpdated() {
         // Given
         StatusDto statusDto = new StatusDto(Order.Status.PROCESSED);
@@ -175,7 +175,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    @DisplayName("Update status of non-existing order throws exception")
+    @DisplayName("Update status of non-existing order, throws exception")
     void updateStatus_UpdateStatusOfNonExistingOrder_ThrowsException() {
         // Given
         StatusDto statusDto = new StatusDto(Order.Status.PROCESSED);

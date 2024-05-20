@@ -9,12 +9,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_2;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_3;
-import static ua.bookstore.online.utils.ConstantAndMethod.createCategory;
-import static ua.bookstore.online.utils.ConstantAndMethod.getCategoryRequest;
-import static ua.bookstore.online.utils.ConstantAndMethod.getFiction;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.ID_2;
+import static ua.bookstore.online.utils.TestDataUtils.ID_3;
+import static ua.bookstore.online.utils.TestDataUtils.createCategory;
+import static ua.bookstore.online.utils.TestDataUtils.getCategoryRequest;
+import static ua.bookstore.online.utils.TestDataUtils.getFiction;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +55,7 @@ class CategoryServiceImplTest {
 
     @Test
     @DisplayName("Get all categories from DB, returns list of CategoryResponseDto")
-    void findAll_ReturnsListOfCategoryResponseDto() {
+    void findAll_FindAllCategories_ReturnsListOfCategoryResponseDto() {
         // Given
         Pageable pageable = Pageable.unpaged();
         List<Category> categoriesFromDb = List.of(createCategory(), createCategory());
@@ -128,7 +128,7 @@ class CategoryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Update existing category successfully")
+    @DisplayName("Update existing category, returns CategoryResponseDto")
     void update_ExistingCategory_ReturnsCategoryResponseDto() {
         // Given
         CategoryRequestDto requestDto = getCategoryRequest();
@@ -165,8 +165,8 @@ class CategoryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Delete existing category by ID")
-    void deleteById_ExistingCategory_Ok() {
+    @DisplayName("Delete existing category by ID, returns void")
+    void deleteById_ExistingCategory_SuccessfullyDeleted() {
         // Mocking behavior
         when(categoryRepository.findById(ID_1)).thenReturn(Optional.of(createCategory()));
         doNothing().when(categoryRepository).deleteById(ID_1);
@@ -190,7 +190,7 @@ class CategoryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Get all existing category IDs from provided IDs")
+    @DisplayName("Get all existing category IDs from provided IDs, returns set of existing IDs")
     void getAllExistedCategoryIdsFromIds_ValidIds_ReturnsExistingCategoryIds() {
         // Given
         Set<Long> categoryIds = Set.of(ID_1, ID_2, ID_3);
@@ -213,7 +213,7 @@ class CategoryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Get all existing category IDs from empty list of IDs")
+    @DisplayName("Get all existing category IDs from empty list of IDs, returns empty collection")
     void getAllExistedCategoryIdsFromIds_EmptyIds_ReturnsEmptySet() {
         // Given
         Set<Long> emptyCategoryIds = Collections.emptySet();

@@ -2,12 +2,12 @@ package ua.bookstore.online.repository.category;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_SQL;
-import static ua.bookstore.online.utils.ConstantAndMethod.CLASSPATH;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_2;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_3;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_CATEGORIES_SQL;
+import static ua.bookstore.online.utils.TestDataUtils.CLASSPATH;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.ID_2;
+import static ua.bookstore.online.utils.TestDataUtils.ID_3;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
 
 import java.util.List;
 import java.util.Set;
@@ -34,11 +34,11 @@ public class CategoryRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find all categories by IDs")
+    @DisplayName("Find all categories by IDs, returns set of categories")
     @Sql(scripts = {
             CLASSPATH + ADD_CATEGORIES_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    void findAllByIdIn_ReturnsCategoriesForGivenIds() {
+    void findAllByIdIn_FindAllCategoriesById_ReturnsCategoriesForGivenIds() {
         // Given
         Set<Long> categoryIds = Set.of(ID_1, ID_2);
         List<Long> expected = List.of(ID_1, ID_2);
@@ -55,11 +55,11 @@ public class CategoryRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find all categories by IDs when some IDs are invalid")
+    @DisplayName("Find all categories by IDs when some IDs are invalid, return list of existing IDs")
     @Sql(scripts = {
             CLASSPATH + ADD_CATEGORIES_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    void findAllByIdIn_WithInvalidIds_ReturnsValidCategories() {
+    void findAllByIdIn_FindAllCategoriesWithSomeInvalidIds_ReturnsValidCategories() {
         // Given
         Set<Long> categoryIds = Set.of(ID_1, ID_2, ID_3, 6L, 7L);
         List<Long> expected = List.of(ID_1, ID_2, ID_3);

@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static ua.bookstore.online.utils.ConstantAndMethod.PASSWORD;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUser;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUserRequestDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUserResponseDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUserRole;
+import static ua.bookstore.online.utils.TestDataUtils.PASSWORD;
+import static ua.bookstore.online.utils.TestDataUtils.getUser;
+import static ua.bookstore.online.utils.TestDataUtils.getUserRequestDto;
+import static ua.bookstore.online.utils.TestDataUtils.getUserResponseDto;
+import static ua.bookstore.online.utils.TestDataUtils.getUserRole;
 
 import java.util.Optional;
 import java.util.Set;
@@ -53,7 +53,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Register new user")
+    @DisplayName("Register new user, returns UserResponseDto")
     void register_RegisterNewUser_ReturnsUserResponseDto() {
         // Given
         UserRegistrationRequestDto userRequestDto = getUserRequestDto();
@@ -78,7 +78,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Register user whit non-unique email")
+    @DisplayName("Register user whit non-unique email, throws exception")
     void register_RegisterUserWithNonUniqueEmail_ThrowsException() {
         // Given
         UserRegistrationRequestDto userRequestDto = getUserRequestDto();

@@ -5,13 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_2;
-import static ua.bookstore.online.utils.ConstantAndMethod.NON_EXISTING_ID;
-import static ua.bookstore.online.utils.ConstantAndMethod.getFirstOrder;
-import static ua.bookstore.online.utils.ConstantAndMethod.getMalvilleOrderItem;
-import static ua.bookstore.online.utils.ConstantAndMethod.getMalvilleOrderItemResponse;
-import static ua.bookstore.online.utils.ConstantAndMethod.getUser;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.ID_2;
+import static ua.bookstore.online.utils.TestDataUtils.NON_EXISTING_ID;
+import static ua.bookstore.online.utils.TestDataUtils.getFirstOrder;
+import static ua.bookstore.online.utils.TestDataUtils.getMalvilleOrderItem;
+import static ua.bookstore.online.utils.TestDataUtils.getMalvilleOrderItemResponse;
+import static ua.bookstore.online.utils.TestDataUtils.getUser;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +48,7 @@ class OrderItemServiceImplTest {
     }
 
     @Test
-    @DisplayName("Get all order item DTOs")
+    @DisplayName("Get all order item DTOs, returns list of OrderItemResponseDto")
     void findAllByOrder_GetAllOrderItems_ReturnsListOfOrderItemsDtos() {
         // Given
         User user = getUser();
@@ -72,7 +72,7 @@ class OrderItemServiceImplTest {
     }
 
     @Test
-    @DisplayName("Get all order item DTOs from non-existing order")
+    @DisplayName("Get all order item DTOs from non-existing order, throws exception")
     void findAllByOrder_GetAllOrderItemsFromNonExistingOrder_ThrowsException() {
         // Given
         User user = getUser();
@@ -91,7 +91,7 @@ class OrderItemServiceImplTest {
     }
 
     @Test
-    @DisplayName("Get order item DTO by ID")
+    @DisplayName("Get order item DTO by ID, returns OrderItemResponseDto")
     void getById_GetOrderItemByID_ReturnsOrderItemDto() {
         // Given
         User user = getUser();
@@ -112,7 +112,7 @@ class OrderItemServiceImplTest {
     }
 
     @Test
-    @DisplayName("Get order item DTO by non-existing ID")
+    @DisplayName("Get order item DTO by non-existing ID, throws exception")
     void getById_GetOrderItemByNonExistingID_ThrowException() {
         // Given
         User user = getUser();
