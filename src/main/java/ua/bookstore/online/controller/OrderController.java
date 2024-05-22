@@ -96,7 +96,7 @@ public class OrderController {
             @ApiResponse(responseCode = "401", description = "Required authorization",
                     content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     })
-    public List<OrderItemResponseDto> getAllCartItems(@PathVariable Long orderId,
+    public List<OrderItemResponseDto> getAllOrderItems(@PathVariable Long orderId,
             @AuthenticationPrincipal User user, Pageable pageable) {
         return orderService.getAllCartItems(orderId, user, pageable);
     }
@@ -111,7 +111,7 @@ public class OrderController {
             @ApiResponse(responseCode = "401", description = "Required authorization",
                     content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     })
-    public OrderItemResponseDto getCartItem(@PathVariable Long id, @PathVariable Long orderId,
+    public OrderItemResponseDto getOrderItem(@PathVariable Long id, @PathVariable Long orderId,
             @AuthenticationPrincipal User user) {
         return orderService.getCartItem(id, orderId, user);
     }

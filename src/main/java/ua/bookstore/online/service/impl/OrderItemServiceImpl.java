@@ -31,7 +31,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public List<OrderItemResponseDto> findAllByOrder(Long orderId, User user, Pageable pageable) {
         List<OrderItem> orderItems =
-                orderItemRepository.fidAllByOrderAndUser(orderId, user, pageable);
+                orderItemRepository.findAllByOrder_IdAndOrder_User(orderId, user, pageable);
         if (orderItems.isEmpty()) {
             throw new EntityNotFoundException("Can't find order by id: " + orderId);
         }
@@ -43,7 +43,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public OrderItemResponseDto getById(Long id, Long orderId, User user) {
         OrderItem orderItem =
-                orderItemRepository.findByIdAndOrder(id, orderId, user).orElseThrow(
+                orderItemRepository.findByIdAndOrder_IdAndOrder_User(id, orderId, user).orElseThrow(
                         () -> new EntityNotFoundException(
                                 "Can't find order by id: %s and orderItem id: %s"
                                         .formatted(orderId, id)));

@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length;
 public record UserLoginRequestDto(
         @NotBlank
         @Email(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
-        @Schema(example = "exemple@exemple.com")
+        @Schema(example = "example@example.com")
         String email,
         @NotBlank
         @Length(min = 8, max = 24)

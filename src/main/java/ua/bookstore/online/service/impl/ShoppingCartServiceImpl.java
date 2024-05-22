@@ -7,6 +7,7 @@ import ua.bookstore.online.dto.shopping.cart.CartItemRequestDto;
 import ua.bookstore.online.dto.shopping.cart.CartItemResponseDto;
 import ua.bookstore.online.dto.shopping.cart.QuantityDto;
 import ua.bookstore.online.dto.shopping.cart.ShoppingCartDto;
+import ua.bookstore.online.exception.EntityNotFoundException;
 import ua.bookstore.online.mapper.ShoppingCartMapper;
 import ua.bookstore.online.model.ShoppingCart;
 import ua.bookstore.online.model.User;
@@ -40,14 +41,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     @Transactional
     public QuantityDto updateCartItem(Long cartItemId, QuantityDto quantityDto, User user) {
-        ShoppingCart shoppingCart = getExistedOrNewCart(user);
+        ShoppingCart shoppingCart = cartRepository.findByUser(user).orElseThrow(
+                () -> new EntityNotFoundException("Can't update item by ID: " + cartItemId));
         return cartItemService.changeQuantity(cartItemId, quantityDto, shoppingCart);
     }
 
     @Override
     @Transactional
     public void removeCartItem(Long cartItemId, User user) {
-        ShoppingCart shoppingCart = getExistedOrNewCart(user);
+        ShoppingCart shoppingCart = cartRepository.findByUser(user).orElseThrow(
+                () -> new EntityNotFoundException("Can't remove item by ID: " + cartItemId));
         cartItemService.remove(cartItemId, shoppingCart);
     }
 

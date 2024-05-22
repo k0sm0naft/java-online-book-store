@@ -2,8 +2,12 @@ package ua.bookstore.online.repository.category;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ua.bookstore.online.utils.ConstantAndMethod.CLASSPATH_ADD_THREE_CATEGORIES_SQL;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_CATEGORIES_SQL;
+import static ua.bookstore.online.utils.TestDataUtils.CLASSPATH;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.ID_2;
+import static ua.bookstore.online.utils.TestDataUtils.ID_3;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
 
 import java.util.List;
 import java.util.Set;
@@ -21,11 +25,6 @@ import ua.bookstore.online.model.Category;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class CategoryRepositoryTest {
-    private static final long ID_1 = 1L;
-    private static final long ID_2 = 2L;
-    private static final long ID_3 = 3L;
-    private static final long ID_4 = 4L;
-    private static final long ID_5 = 5L;
     @Autowired
     private CategoryRepository categoryRepository;
 
@@ -35,11 +34,11 @@ public class CategoryRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find all categories by IDs")
+    @DisplayName("Find all categories by IDs, returns set of categories")
     @Sql(scripts = {
-            CLASSPATH_ADD_THREE_CATEGORIES_SQL
+            CLASSPATH + ADD_CATEGORIES_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    void findAllByIdIn_ReturnsCategoriesForGivenIds() {
+    void findAllByIdIn_FindAllCategoriesById_ReturnsCategoriesForGivenIds() {
         // Given
         Set<Long> categoryIds = Set.of(ID_1, ID_2);
         List<Long> expected = List.of(ID_1, ID_2);
@@ -56,13 +55,13 @@ public class CategoryRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find all categories by IDs when some IDs are invalid")
+    @DisplayName("Find all categories by IDs when some IDs are invalid, return list of existing IDs")
     @Sql(scripts = {
-            CLASSPATH_ADD_THREE_CATEGORIES_SQL
+            CLASSPATH + ADD_CATEGORIES_SQL
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    void findAllByIdIn_WithInvalidIds_ReturnsValidCategories() {
+    void findAllByIdIn_FindAllCategoriesWithSomeInvalidIds_ReturnsValidCategories() {
         // Given
-        Set<Long> categoryIds = Set.of(ID_1, ID_2, ID_3, ID_4, ID_5);
+        Set<Long> categoryIds = Set.of(ID_1, ID_2, ID_3, 6L, 7L);
         List<Long> expected = List.of(ID_1, ID_2, ID_3);
 
         // When

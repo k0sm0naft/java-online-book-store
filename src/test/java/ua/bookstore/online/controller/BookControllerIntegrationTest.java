@@ -9,17 +9,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_FOR_BOOKS_SQL;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_CATEGORIES_SQL;
-import static ua.bookstore.online.utils.ConstantAndMethod.ADD_THREE_BOOKS_SQL;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ISBN;
-import static ua.bookstore.online.utils.ConstantAndMethod.createBookRequestDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.getMelville;
-import static ua.bookstore.online.utils.ConstantAndMethod.getNewOrwell;
-import static ua.bookstore.online.utils.ConstantAndMethod.getOrwell;
-import static ua.bookstore.online.utils.ConstantAndMethod.getRequestDto;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_CATEGORIES_FOR_BOOKS_SQL;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_CATEGORIES_SQL;
+import static ua.bookstore.online.utils.TestDataUtils.ADD_THREE_BOOKS_SQL;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.ISBN_ORWELL;
+import static ua.bookstore.online.utils.TestDataUtils.NON_EXISTING_ISBN;
+import static ua.bookstore.online.utils.TestDataUtils.createBookRequestDto;
+import static ua.bookstore.online.utils.TestDataUtils.getMelville;
+import static ua.bookstore.online.utils.TestDataUtils.getNewOrwell;
+import static ua.bookstore.online.utils.TestDataUtils.getOrwell;
+import static ua.bookstore.online.utils.TestDataUtils.getRequestDto;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
@@ -67,10 +68,8 @@ class BookControllerIntegrationTest {
         tearDown(dataSource);
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(true);
-            ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource(ADD_CATEGORIES_SQL));
-            ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource(ADD_THREE_BOOKS_SQL));
+            ScriptUtils.executeSqlScript(connection, new ClassPathResource(ADD_CATEGORIES_SQL));
+            ScriptUtils.executeSqlScript(connection, new ClassPathResource(ADD_THREE_BOOKS_SQL));
             ScriptUtils.executeSqlScript(connection,
                     new ClassPathResource(ADD_CATEGORIES_FOR_BOOKS_SQL));
         }
@@ -82,9 +81,38 @@ class BookControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create new book")
+    @DisplayName("Create new book, expected: status - 201, response - BookDto")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
-    void createBook_CreateNewBook_ReturnsExpectedBook() throws Exception {
+    void createBook_CreateNewBook_ReturnsExpectedBookDto() throws Exception {
+        // Given
+        CreateBookRequestDto requestDto = createBookRequestDto();
+        String jsonRequest = objectMapper.writeValueAsString(requestDto);
+        jsonRequest = jsonRequest.replace(ISBN_ORWELL, NON_EXISTING_ISBN);
+
+        // When
+        MvcResult result = mockMvc.perform(post(URI)
+                                          .content(jsonRequest)
+                                          .contentType(MediaType.APPLICATION_JSON))
+                                  .andExpect(status().isCreated())
+                                  .andReturn();
+
+        // Then
+        BookDto actual =
+                objectMapper.readValue(result.getResponse().getContentAsString(),
+                        BookDto.class);
+        assertNotNull(actual);
+        assertTrue(EqualsBuilder
+                .reflectionEquals(getOrwell(), actual, "id", "isbn", "categoryIds"));
+        assertNotNull(actual.id());
+        assertEquals(NON_EXISTING_ISBN, actual.isbn());
+        assertTrue(requestDto.categoryIds().containsAll(actual.categoryIds()));
+    }
+
+    @Test
+    @DisplayName("Create new book with existing ISBN, expected: status - 409, response - ProblemDetail")
+    @WithMockUser(username = "admin", roles = {"MANAGER"})
+    void createBook_CreateNewBookWithExistingIsbn_RespondConflictAndReturnsProblemDetail()
+            throws Exception {
         // Given
         CreateBookRequestDto requestDto = createBookRequestDto();
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
@@ -105,13 +133,13 @@ class BookControllerIntegrationTest {
         assertNotNull(actual.getInstance());
         assertEquals(URI, actual.getInstance().getPath());
         assertNotNull(actual.getProperties());
-        assertEquals("Non uniq ISBN: " + ISBN, actual.getProperties().get("error"));
+        assertEquals("Non uniq ISBN: " + ISBN_ORWELL, actual.getProperties().get("error"));
     }
 
     @Test
-    @DisplayName("Update existing book")
+    @DisplayName("Update existing book, expected: status - 202, response - BookDto")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
-    void updateBook_UpdateExisingBook_ReturnsExpectedBook() throws Exception {
+    void updateBook_UpdateExisingBook_ReturnsExpectedBookDto() throws Exception {
         // Given
         String updatedTitle = "updatedTitle";
         CreateBookRequestDto requestDto = getRequestDto(updatedTitle);
@@ -136,9 +164,9 @@ class BookControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get existing book by ID")
+    @DisplayName("Get existing book by ID, expected: status - 200, response - BookDto")
     @WithMockUser
-    void getBookById_GetExistingBook_ReturnsExpectedBook() throws Exception {
+    void getBookById_GetExistingBook_ReturnsExpectedBookDto() throws Exception {
         // Given
         BookDto expected = getOrwell();
         String url = URI + "/" + ID_1;
@@ -159,9 +187,9 @@ class BookControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get two existing books")
+    @DisplayName("Get two existing books, expected: status - 200, response - BookDto[]")
     @WithMockUser
-    void getAll_GetTwoExistingBooks_ReturnsExpectedBooks() throws Exception {
+    void getAll_GetTwoExistingBooks_ReturnsExpectedBookDtos() throws Exception {
         // Given
         List<BookDto> expected = List.of(getOrwell(), getMelville());
 
@@ -184,9 +212,9 @@ class BookControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Search books by params")
+    @DisplayName("Search books by params, expected: status - 200, response - BookDto[]")
     @WithMockUser
-    void searchBooks_SearchExistingBooksByParams_ReturnsExpectedBooks() throws Exception {
+    void searchBooks_SearchExistingBooksByParams_ReturnsExpectedBookDtos() throws Exception {
         // Given
         List<BookDto> expected = List.of(getOrwell(), getMelville());
 
@@ -205,15 +233,14 @@ class BookControllerIntegrationTest {
         BookDto[] actual =
                 objectMapper.readValue(result.getResponse().getContentAsString(),
                         BookDto[].class);
-        System.out.println(Arrays.stream(actual).toList());
         assertNotNull(actual);
         assertEquals(expected.size(), actual.length);
     }
 
     @Test
-    @DisplayName("Delete existing book")
+    @DisplayName("Successfully delete existing book, expected: status - 204")
     @WithMockUser(username = "admin", roles = {"MANAGER"})
-    void deleteBook_DeleteExisingBook_SuccessfullyDeleted() throws Exception {
+    void deleteBook_DeleteExisingBook_RespondNoContent() throws Exception {
         // Given
         String url = URI + "/" + ID_1;
 

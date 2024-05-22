@@ -37,8 +37,9 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public QuantityDto changeQuantity(Long id, QuantityDto quantity, ShoppingCart shoppingCart) {
-        CartItem cartItem = cartItemRepository
-                .findCartItemByIdAndShoppingCart(id, shoppingCart)
+        CartItem cartItem = shoppingCart.getCartItems().stream()
+                .filter(ci -> ci.getId().equals(id))
+                .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Can't find cart item id%s for user %s"
                                 .formatted(id, shoppingCart.getUser().getEmail())));

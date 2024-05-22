@@ -3,16 +3,20 @@ package ua.bookstore.online.repository.book;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ua.bookstore.online.utils.ConstantAndMethod.ID_1;
-import static ua.bookstore.online.utils.ConstantAndMethod.ISBN;
-import static ua.bookstore.online.utils.ConstantAndMethod.NON_EXISTING_ID;
-import static ua.bookstore.online.utils.ConstantAndMethod.NON_EXISTING_ISBN;
-import static ua.bookstore.online.utils.ConstantAndMethod.beforeEachBookRepositoryTest;
-import static ua.bookstore.online.utils.ConstantAndMethod.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.ID_1;
+import static ua.bookstore.online.utils.TestDataUtils.ISBN_ORWELL;
+import static ua.bookstore.online.utils.TestDataUtils.NON_EXISTING_ID;
+import static ua.bookstore.online.utils.TestDataUtils.NON_EXISTING_ISBN;
+import static ua.bookstore.online.utils.TestDataUtils.beforeEachBookRepositoryTest;
+import static ua.bookstore.online.utils.TestDataUtils.getClearedStatistics;
+import static ua.bookstore.online.utils.TestDataUtils.tearDown;
+import static ua.bookstore.online.utils.TestDataUtils.verifyCountOfDbCalls;
 
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
+import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +35,8 @@ import ua.bookstore.online.model.Book;
 public class BookRepositoryTest {
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private EntityManager entityManager;
 
     @BeforeEach
     public void beforeEach(@Autowired DataSource dataSource) {
@@ -43,11 +49,11 @@ public class BookRepositoryTest {
     }
 
     @Test
-    @DisplayName("Return optional of book by ISBN")
+    @DisplayName("Find book by ISBN, return optional of book by ISBN")
     void findByIsbn_FindingExistingAndNonExistingBookByIsbn_ReturnsOptionalOfBook() {
         // When
         Optional<Book> actualEmpty = bookRepository.findByIsbn(NON_EXISTING_ISBN);
-        Optional<Book> actualExisted = bookRepository.findByIsbn(ISBN);
+        Optional<Book> actualExisted = bookRepository.findByIsbn(ISBN_ORWELL);
 
         // Then
         assertTrue(actualEmpty.isEmpty(), "Optional of book by non-existing ISBN should be empty");
@@ -56,8 +62,10 @@ public class BookRepositoryTest {
     }
 
     @Test
-    @DisplayName("Return optional of book by ID with set of categories")
+    @DisplayName("Find book with categories, return optional of book by ID with set of categories")
     void findByIdWithCategories_FindingExistingAndNonExistingBookById_ReturnsOptionalOfBook() {
+        // Given
+        Statistics statistics = getClearedStatistics(entityManager);
         // When
         Optional<Book> actualEmpty = bookRepository.findByIdWithCategories(NON_EXISTING_ID);
         Optional<Book> actualExisted = bookRepository.findByIdWithCategories(ID_1);
@@ -66,12 +74,14 @@ public class BookRepositoryTest {
         assertTrue(actualEmpty.isEmpty(), "Optional of book by non-existing ID should be empty");
         assertTrue(actualExisted.isPresent(), "Optional of book by existing ID should be present");
         assertNotNull(actualExisted.get().getCategories());
+        verifyCountOfDbCalls(2, statistics);
     }
 
     @Test
-    @DisplayName("Get all from DB with categories by params")
+    @DisplayName("Find all from DB with categories by params, returns page of books")
     void findAllByParams_GetAllBooks_ReturnsAllBooks() {
         // Given
+        Statistics statistics = getClearedStatistics(entityManager);
         Specification<Book> specification = Specification.where(null);
         Pageable pageable = Pageable.unpaged();
 
@@ -84,12 +94,14 @@ public class BookRepositoryTest {
         actual.stream()
                 .map(Book::getCategories)
                 .forEach(Assertions::assertNotNull);
+        verifyCountOfDbCalls(1, statistics);
     }
 
     @Test
-    @DisplayName("Get all from DB with categories")
+    @DisplayName("Find all from DB with categories, returns list of books")
     void findAllBooks_GetAllBooks_ReturnsAllBooks() {
         // Given
+        Statistics statistics = getClearedStatistics(entityManager);
         Pageable pageable = Pageable.unpaged();
 
         // When
@@ -99,14 +111,16 @@ public class BookRepositoryTest {
         int expectedSize = 3;
         assertEquals(expectedSize, actual.size());
         actual.stream()
-               .map(Book::getCategories)
-               .forEach(Assertions::assertNotNull);
+                .map(Book::getCategories)
+                .forEach(Assertions::assertNotNull);
+        verifyCountOfDbCalls(1, statistics);
     }
 
     @Test
-    @DisplayName("Get all books with belongs to category ID")
+    @DisplayName("Find all books witch belongs to category ID, returns list of books")
     void findAllByCategoryId_GetAllBooksByCategoryId_ReturnsAllBooksByCategoryId() {
         // Given
+        Statistics statistics = getClearedStatistics(entityManager);
         Pageable pageable = Pageable.unpaged();
         Long classicId = 3L;
 
@@ -121,18 +135,19 @@ public class BookRepositoryTest {
         int expectedSizeClassic = 1;
         assertEquals(expectedSizeFiction, actualFiction.size(), "Size should be equals");
         assertEquals(expectedSizeClassic, actualClassic.size(), "Size should be equals");
+        verifyCountOfDbCalls(2, statistics);
     }
 
     @Test
-    @DisplayName("Get all books by ID and ISBN")
+    @DisplayName("Find all books by ID and ISBN, returns list of books")
     void findAllByIdOrIsbn_GetAllBooksByIdAndIsbn_ReturnsAllBooksByIdAndIsbn() {
         // Given
         Long secondExistId = 2L;
 
         // When
-        List<Book> actualTwo = bookRepository.findAllByIdOrIsbn(secondExistId, ISBN);
-        List<Book> actualOne1 = bookRepository.findAllByIdOrIsbn(ID_1, ISBN);
-        List<Book> actualOne2 = bookRepository.findAllByIdOrIsbn(NON_EXISTING_ID, ISBN);
+        List<Book> actualTwo = bookRepository.findAllByIdOrIsbn(secondExistId, ISBN_ORWELL);
+        List<Book> actualOne1 = bookRepository.findAllByIdOrIsbn(ID_1, ISBN_ORWELL);
+        List<Book> actualOne2 = bookRepository.findAllByIdOrIsbn(NON_EXISTING_ID, ISBN_ORWELL);
         List<Book> actualOne3 = bookRepository.findAllByIdOrIsbn(ID_1, NON_EXISTING_ISBN);
         List<Book> actualZero =
                 bookRepository.findAllByIdOrIsbn(NON_EXISTING_ID, NON_EXISTING_ISBN);
