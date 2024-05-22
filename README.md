@@ -45,40 +45,41 @@
 
 ***
 
-## ✨[Demo](http://ec2-54-234-35-71.compute-1.amazonaws.com/api/swagger-ui/index.html)
+## ✨Demo
 
-<details><summary>How to use demo:</summary>
+### How to use demo:
 
-####
 <details><summary>Use Swagger UI</summary>
 
-1. Open Authentication management Registration endpoint:
+1. Open [link](http://ec2-54-234-35-71.compute-1.amazonaws.com/api/swagger-ui/index.html).
+
+2. Open Authentication management Registration endpoint:
 
    <img style="max-width: 800px" src="img/img1.png" alt="Registration endpoint"/>
 
-2. Click on "Try it out" button:
+3. Click on "Try it out" button:
 
    <img style="max-width: 800px" src="img/img2.png" alt="Try it out button"/>
 
-3. Register a new user (fill in a unique email) and "Execute":
+4. Register a new user (fill in a unique email) and "Execute":
 
    <img style="max-width: 800px" src="img/img3.png" alt="Register new user"/>
 
-4. If you successfully registered, you'll see status code 201 with your registration data:
+5. If you successfully registered, you'll see status code 201 with your registration data:
 
    <img style="max-width: 800px" src="img/img4.png" alt="Registration success"/>
 
-5. Repeat steps 1-3 on Authentication management Login endpoint (use registered login and password).
+6. Repeat steps 1-3 on Authentication management Login endpoint (use registered login and password).
 
-6. Copy token from response body:
+7. Copy token from response body:
 
    <img style="max-width: 800px" src="img/img5.png" alt="Copy token"/>
 
-7. Click on the "Authorize" button on the top of the page, paste the token in the field, and click "Authorize":
+8. Click on the "Authorize" button on the top of the page, paste the token in the field, and click "Authorize":
 
    <img style="max-width: 800px" src="img/img6.png" alt="Authorize token"/>
 
-8. Now you can use [endpoints for users](#Authentication).
+9. Now you can use [endpoints for users](#Authentication).
 
 </details>
 
@@ -93,8 +94,6 @@ If you want to use manager's endpoints, fill free to use credentials below:
 ```
 
 Note: The token expires after 1 hour, so you must log in again.
-
-</details>
 
 ***
 
@@ -340,13 +339,23 @@ To stop and remove the containers created by the Compose file, use the docker-co
 
 ## 📬Postman Collection
 
-To facilitate testing, a Postman collection has been provided. You can import it into Postman and use it to test the local API endpoints.
+To facilitate testing, a Postman collection has been provided. You can import it into Postman and use it to test the API endpoints.
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://www.postman.com/avionics-cosmonaut-92857509/workspace/book-store-api/overview)
 
 
-Or fork and use remote URL:
-- After you fork collection, you can register a new user, or use saved users.
+<details><summary>To chose URL:</summary>
+
+1. Click on API Collection.
+2. Go to Variables tab.
+3. Chose remote or local URL.
+4. Save changes.
+
+    <img style="max-width: 800px" src="img/postman_urls.png" alt="chose URL"/>
+
+</details>
+
+- After you fork collection, you can register a new user, or use credentials below in the text.
 - After log in, the generated token will be automatically added to all next requests that required authentication.
 
 <details><summary>User</summary>
