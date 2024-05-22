@@ -33,7 +33,7 @@
     - [▶Category](#Category)
     - [▶Shopping Cart](#Shopping-Cart)
     - [▶Order](#Order)
-- [Short Overview](#Short-Overview)
+- [▶Short Overview](#Short-Overview)
 - [▶Setup Instructions](#Setup-Instructions)
     - [▶Required](#Required)
     - [▶Installation](#Installation)
@@ -262,7 +262,7 @@ Use the interactive features of Swagger UI to make requests directly from the br
 ## 📺Short Overview
 
 <a href="https://www.loom.com/share/0e9df6c8dab44ffcbb104629e2afa5ce">
-  <img style="max-width:200px;" src="img.png" alt="Backend for Online Bookstore - Watch Video">
+  <img style="max-width:200px;" src="img/loom.png" alt="Backend for Online Bookstore - Watch Video">
 </a>
 
 ***
