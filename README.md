@@ -28,16 +28,16 @@
 - [▶Demo](#Demo)
 - [▶Technologies Used](#Technologies-Used)
 - [▶Features](#Features)
-      - [▶Swagger Documentation](#Swagger-Documentation)
-      - [▶Authentication](#Authentication)
-      - [▶Book](#Book)
-      - [▶Category](#Category)
-      - [▶Shopping Cart](#Shopping-Cart)
-      - [▶Order](#Order)
+  - [▶Swagger Documentation](#Swagger-Documentation)
+  - [▶Authentication](#Authentication)
+  - [▶Book](#Book)
+  - [▶Category](#Category)
+  - [▶Shopping Cart](#Shopping-Cart)
+  - [▶Order](#Order)
 - [▶Setup Instructions](#Setup-Instructions)
-    - [▶Required](#Required)
-    - [▶Installation](#Installation)
-    - [▶Running Tests](#Running-Tests)
+  - [▶Required](#Required)
+  - [▶Installation](#Installation)
+  - [▶Running Tests](#Running-Tests)
 - [▶Postman Collection](#Postman-Collection)
 - [▶Challenges Faced](#Challenges-Faced)
 - [▶Author](#Author)
@@ -139,14 +139,15 @@ Use the interactive features of Swagger UI to make requests directly from the br
 
 ### 🔑Authentication
 
-<details><summary>Authentication Endpoints: Users can register and log in.</summary>
+<details>
+<summary>Authentication Endpoints: Users can register and log in.</summary>
 
-  - **Register a new user** 
-    - Request: `POST /api/auth/register`
-    - Response: `201 Created`
-  - **Login a user**
-    - Request: `POST /api/auth/login`
-    - Response: `200 OK` with JWT token
+- **Register a new user** 
+  - Request: `POST /api/auth/register`
+  - Response: `201 Created`
+- **Login a user**
+  - Request: `POST /api/auth/login`
+  - Response: `200 OK` with JWT token
 
 </details>
 
@@ -154,113 +155,113 @@ Use the interactive features of Swagger UI to make requests directly from the br
 ### 📗Book
 
 <details>
-  <summary>User's Endpoints: View and search books.</summary>
+<summary>User's Endpoints: View and search books.</summary>
 
-  - **Get all books**
-    - Request: `GET /api/books`
-    - Response: `200 OK`
-  - **Get a book by ID**
-    - Request: `GET /api/books/{id}`
-    - Response: `200 OK`
-  - **Search books by params**
-    - Request `GET /api/books/search`
-    - Response: `200 OK`
+- **Get all books**
+  - Request: `GET /api/books`
+  - Response: `200 OK`
+- **Get a book by ID**
+  - Request: `GET /api/books/{id}`
+  - Response: `200 OK`
+- **Search books by params**
+  - Request `GET /api/books/search`
+  - Response: `200 OK`
 
 </details>
 
 <details>
-  <summary>Manager's and Admin's Endpoints: Add, update, and delete books.</summary>
+<summary>Manager's and Admin's Endpoints: Add, update, and delete books.</summary>
 
-  - **Add a new book**
-    - Request `POST /api/books`
-    - Response: `201 Created`
-  - **Update a book**
-    - Request `PUT /api/books/{id}`
-    - Response: `202 Accepted`
-  - **Delete a book**
-    - Request `DELETE /api/books/{id}`
-    - Response: `204 No Content`
+- **Add a new book**
+  - Request `POST /api/books`
+  - Response: `201 Created`
+- **Update a book**
+  - Request `PUT /api/books/{id}`
+  - Response: `202 Accepted`
+- **Delete a book**
+  - Request `DELETE /api/books/{id}`
+  - Response: `204 No Content`
 
 </details>
 
 ### 📑Category
 
 <details>
-  <summary>User's Endpoints: View categories.</summary>
+<summary>User's Endpoints: View categories.</summary>
 
-  - **Get all categories**
-    - Request `GET /api/categories`
-    - Response: `200 OK`
-  - **Get a category by ID**
-    - Request `GET /api/categories/{id}`
-    - Response: `200 OK`
-  - **Get all books from category**
-    - Request `GET /api/categories/{id}/books`
-    - Response: `200 OK`
+- **Get all categories**
+  - Request `GET /api/categories`
+  - Response: `200 OK`
+- **Get a category by ID**
+  - Request `GET /api/categories/{id}`
+  - Response: `200 OK`
+- **Get all books from category**
+  - Request `GET /api/categories/{id}/books`
+  - Response: `200 OK`
 
 </details>
 
 <details>
-  <summary>Manager's and Admin's Endpoints: Create, update, and delete book categories.</summary>
+<summary>Manager's and Admin's Endpoints: Create, update, and delete book categories.</summary>
 
-  - **Add a new category**
-    - Request `POST /api/categories`
-    - Response: `201 Created`
-  - **Update a category**
-    - Request `PUT /api/categories/{id}`
-    - Response: `202 Accepted`
-  - **Delete a category**
-    - Request `DELETE /api/categories/{id}`
-    - Response: `204 No Content`
+- **Add a new category**
+  - Request `POST /api/categories`
+  - Response: `201 Created`
+- **Update a category**
+  - Request `PUT /api/categories/{id}`
+  - Response: `202 Accepted`
+- **Delete a category**
+  - Request `DELETE /api/categories/{id}`
+  - Response: `204 No Content`
 
 </details>
 
 ### 🛒Shopping Cart
 
 <details>
-  <summary>User's Endpoints: Add books to the cart, view cart items, update and remove items from the cart.</summary>
+<summary>User's Endpoints: Add books to the cart, view cart items, update and remove items from the cart.</summary>
 
-  - **Get current user's shopping cart**
-     - Request `GET /api/cart`
-     - Response: `200 Ok`
-  - **Add a book to the cart**
-     - Request `POST /api/cart`
-     - Response: `201 Created`
-  - **Update book quantity**
-     - Request `PUT /api/cart/cart-items/{cartItemId}`
-     - Response: `202 Accepted`
-  - **Remove a book from the cart**
-     - Request `DELETE /api/cart/cart-items/{cartItemId}`
-     - Response: `204 No Content`
+- **Get current user's shopping cart**
+  - Request `GET /api/cart`
+  - Response: `200 Ok`
+- **Add a book to the cart**
+  - Request `POST /api/cart`
+  - Response: `201 Created`
+- **Update book quantity**
+  - Request `PUT /api/cart/cart-items/{cartItemId}`
+  - Response: `202 Accepted`
+- **Remove a book from the cart**
+  - Request `DELETE /api/cart/cart-items/{cartItemId}`
+  - Response: `204 No Content`
 
 </details>
 
 ### 🛍️Order
 
 <details>
-  <summary>User's Endpoints: Complete the purchase, view past orders and their details.</summary>
+<summary>User's Endpoints: Complete the purchase, view past orders and their details.</summary>
 
 - **Create order**
-       - Request `POST /api/orders`
-       - Response: `201 Created`
-    - **Get all orders for current user**
-       - Request `GET /api/orders`
-       - Response: `200 Ok`
-    - **Get an order details by ID**
-     - Request `GET /api/orders/{orderId}/items`
-     - Response: `200 Ok`
-  - **Get an ordered book details by ID**
-       - Request `GET /api/orders/{orderId}/items/{id}`
-        - Response: `200 Ok`
+  - Request `POST /api/orders`
+  - Response: `201 Created`
+- **Get all orders for current user**
+  - Request `GET /api/orders`
+  - Response: `200 Ok`
+- **Get an order details by ID**
+  - Request `GET /api/orders/{orderId}/items`
+  - Response: `200 Ok`
+- **Get an ordered book details by ID**
+  - Request `GET /api/orders/{orderId}/items/{id}`
+  - Response: `200 Ok`
 
 </details>
 
 <details>
-  <summary>Manager's and Admin's Order Endpoints: Update order statuses.</summary>
+<summary>Manager's and Admin's Order Endpoints: Update order statuses.</summary>
 
 - **Update order status**
-       - Request `PATCH /api/orders/{id}`
-       - Response: `202 Accepted`
+   - Request `PATCH /api/orders/{id}`
+   - Response: `202 Accepted`
 
 </details>
 
