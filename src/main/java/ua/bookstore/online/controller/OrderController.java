@@ -9,7 +9,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,7 +66,8 @@ public class OrderController {
                     content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     })
     public List<OrderResponseDto> getOrderHistory(@AuthenticationPrincipal User user,
-            Pageable pageable) {
+            @ParameterObject @PageableDefault(sort = "orderDate", value = 5) Pageable pageable
+    ) {
         return orderService.getAllOrders(user, pageable);
     }
 
@@ -97,7 +100,9 @@ public class OrderController {
                     content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     })
     public List<OrderItemResponseDto> getAllOrderItems(@PathVariable Long orderId,
-            @AuthenticationPrincipal User user, Pageable pageable) {
+            @AuthenticationPrincipal User user,
+            @ParameterObject @PageableDefault(sort = "id", value = 5) Pageable pageable
+    ) {
         return orderService.getAllCartItems(orderId, user, pageable);
     }
 
