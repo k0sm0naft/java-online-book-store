@@ -9,7 +9,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -82,7 +84,9 @@ public class CategoryController {
             @ApiResponse(responseCode = "401", description = "Required authorization",
                     content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
     })
-    public List<CategoryResponseDto> getAll(Pageable pageable) {
+    public List<CategoryResponseDto> getAll(
+            @ParameterObject @PageableDefault(sort = "name", value = 5) Pageable pageable
+    ) {
         return categoryService.findAll(pageable);
     }
 
@@ -111,7 +115,9 @@ public class CategoryController {
                     content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
     })
     public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(
-            @PathVariable Long id, Pageable pageable) {
+            @PathVariable Long id,
+            @ParameterObject @PageableDefault(sort = "title", value = 5)Pageable pageable
+    ) {
         return bookService.getByCategoryId(id, pageable);
     }
 

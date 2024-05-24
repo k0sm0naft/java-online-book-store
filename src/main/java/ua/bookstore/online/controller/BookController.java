@@ -10,7 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -102,7 +104,8 @@ public class BookController {
                     content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
     })
     public List<BookDto> getAll(
-            @Parameter(description = "Parameters for pagination") Pageable pageable
+            @ParameterObject
+            @PageableDefault(sort = {"price", "title"}, value = 5) Pageable pageable
     ) {
         return bookService.getAll(pageable);
     }
@@ -118,8 +121,11 @@ public class BookController {
             @ApiResponse(responseCode = "401", description = "Required authorization",
                     content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
     })
-    public List<BookDto> searchBooks(Pageable pageable,
-            BookSearchParameters bookSearchParameters) {
+    public List<BookDto> searchBooks(
+            @ParameterObject
+            @PageableDefault(sort = {"price", "title"}, value = 5)Pageable pageable,
+            BookSearchParameters bookSearchParameters
+    ) {
         return bookService.getByParameters(bookSearchParameters, pageable);
     }
 

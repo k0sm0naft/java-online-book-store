@@ -24,16 +24,16 @@
 
 ## 📜 Table of Contents
 
+- [▶Short Overview](#Short-Overview)
 - [▶Demo](#Demo)
 - [▶Technologies Used](#Technologies-Used)
 - [▶Features](#Features)
-    - [▶Swagger Documentation](#Swagger-Documentation)
-    - [▶Authentication](#Authentication)
-    - [▶Book](#Book)
-    - [▶Category](#Category)
-    - [▶Shopping Cart](#Shopping-Cart)
-    - [▶Order](#Order)
-- [▶Short Overview](#Short-Overview)
+      - [▶Swagger Documentation](#Swagger-Documentation)
+      - [▶Authentication](#Authentication)
+      - [▶Book](#Book)
+      - [▶Category](#Category)
+      - [▶Shopping Cart](#Shopping-Cart)
+      - [▶Order](#Order)
 - [▶Setup Instructions](#Setup-Instructions)
     - [▶Required](#Required)
     - [▶Installation](#Installation)
@@ -42,6 +42,14 @@
 - [▶Challenges Faced](#Challenges-Faced)
 - [▶Author](#Author)
 - [▶License](#License)
+
+***
+
+## 📺Short Overview
+
+<a href="https://www.loom.com/share/0e9df6c8dab44ffcbb104629e2afa5ce">
+    <img style="max-width:200px;" src="img/loom.png" alt="Backend for Online Bookstore - Watch Video">
+    </a>
 
 ***
 
@@ -132,7 +140,7 @@ Use the interactive features of Swagger UI to make requests directly from the br
 ### 🔑Authentication
 
 <details><summary>Authentication Endpoints: Users can register and log in.</summary>
- 
+
   - **Register a new user** 
     - Request: `POST /api/auth/register`
     - Response: `201 Created`
@@ -258,21 +266,10 @@ Use the interactive features of Swagger UI to make requests directly from the br
 
 ***
 
-## 📺Short Overview
-
-<a href="https://www.loom.com/share/0e9df6c8dab44ffcbb104629e2afa5ce">
-  <img style="max-width:200px;" src="img/loom.png" alt="Backend for Online Bookstore - Watch Video">
-</a>
-
-***
-
 ## 🚀Setup Instructions
 
 ### 🧰Required
 
-- **Java 21+**
-- **Maven 3+**
-- **MySQL 8+**
 - **Docker**
 - **Docker Compose**
 
