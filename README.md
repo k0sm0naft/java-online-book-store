@@ -339,7 +339,7 @@ To stop and remove the containers created by the Compose file, use the docker-co
 
 To facilitate testing, a Postman collection has been provided. You can import it into Postman and use it to test the API endpoints.
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://www.postman.com/avionics-cosmonaut-92857509/workspace/book-store-api/overview)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://rent-masters.postman.co/workspace/Book-Store-API~4854dc64-2ea9-44ef-8fc0-0a3bfa01a478/overview)
 
 
 <details><summary>To chose URL:</summary>
